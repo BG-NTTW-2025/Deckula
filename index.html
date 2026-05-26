@@ -1,63 +1,741 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <title>Deckula Prototype</title>
+
 <style>
-body{margin:0;background:#222;font-family:Arial}
-#table{position:relative;width:1240px;height:640px;margin:auto;background:#333;overflow:hidden}
-.area,.button{position:absolute}
-.card{position:absolute;width:88px;height:123px;cursor:pointer}
-#preview{position:absolute;left:17px;top:61px;width:352px;height:492px;border:1px solid #666}
-.text{position:absolute;color:white;font-weight:bold}
+
+/* =====================================================
+   SECTION 1 - CSS
+   ===================================================== */
+
+body
+{
+    margin:0;
+    background:#222;
+    font-family:Arial;
+}
+
+#table
+{
+    position:relative;
+    width:1240px;
+    height:640px;
+    margin:auto;
+    background:#333;
+    overflow:hidden;
+}
+
+.area,
+.button
+{
+    position:absolute;
+}
+
+.card
+{
+    position:absolute;
+    width:88px;
+    height:123px;
+    cursor:pointer;
+}
+
+#preview
+{
+    position:absolute;
+    left:17px;
+    top:61px;
+    width:352px;
+    height:492px;
+    border:1px solid #666;
+}
+
+.text
+{
+    position:absolute;
+    color:white;
+    font-weight:bold;
+}
+
+.button
+{
+    position:absolute;
+}
+
+.button:active
+{
+    opacity:0.5;
+}
+
 </style>
+</head>
 
 <body>
+
+<!-- =====================================================
+     SECTION 2 - PLAYFIELD
+     ===================================================== -->
+
 <div id="table">
-<img id="preview" src="C00.gif">
 
-<img class="area" src="Area_Home.gif" style="left:409px;top:360px">
-<img class="area" src="Area_Discard.gif" style="left:409px;top:179px">
-<img class="area" src="Area_Threat.gif" style="left:620px;top:179px">
-<img class="area" src="Area_Deck.gif" style="left:400px;top:10px">
-<img class="area" src="Area_Visitors.gif" style="left:1079px;top:10px">
-<img class="area" src="Area_Killed.gif" style="left:1079px;top:179px">
+    <img id="preview" src="C00.gif">
 
-<div class="text" style="left:513px;top:6px" id="deckCnt">Deck: 0</div>
-<div class="text" style="left:537px;top:175px" id="disCnt">Dis: 0</div>
-<div class="text" style="left:620px;top:348px" id="clock">00:00</div>
+    <img class="area" src="Area_Home.gif"
+         style="left:409px;top:360px">
+
+    <img class="area" src="Area_Discard.gif"
+         style="left:409px;top:179px">
+
+    <img class="area" src="Area_Threat.gif"
+         style="left:620px;top:179px">
+
+    <img class="area" src="Area_Deck.gif"
+         style="left:400px;top:10px">
+
+    <img class="area" src="Area_Visitors.gif"
+         style="left:1079px;top:10px">
+
+    <img class="area" src="Area_Killed.gif"
+         style="left:1079px;top:179px">
+		 
+	<img class="area" src="Area_Energy.gif"
+		style="left:1079px;top:460px">
+		
+	<img class="area"
+		id="areaVPs"
+		src="Area_VPs.gif"
+		style="left:1079px;top:381px;opacity:0">
+		
+	<img class="button"
+		id="butEnergyMin"
+		src="Sign_Min.gif"
+		style="left:1089px;top:485px">
+
+	<img class="button"
+		id="butEnergyPlus"
+		src="Sign_Plus.gif"
+		style="left:1169px;top:485px">	
+		
+	<img class="button"
+		id="butVPsMin"
+		src="Sign_Min.gif"
+		style="left:1089px;top:406px;opacity:0">
+
+	<img class="button"
+		id="butVPsPlus"
+		src="Sign_Plus.gif"
+		style="left:1169px;top:406px;opacity:0">	
+
+    <div class="text"
+         style="left:513px;top:6px"
+         id="deckCnt">
+         Deck: 0
 </div>
-<script>
-let topZ=1000,activeCard=null,dragOffsetX=0,dragOffsetY=0;
-const table=document.getElementById('table');
-const preview=document.getElementById('preview');
-function createCard(cardName){const c=document.createElement('img');
-c.className='card';
-c.dataset.real=cardName;
-c.dataset.faceup='0';
-c.src='C00.gif';
-c.style.left='416px';
-c.style.top='38px';
+    <div class="text"
+         style="left:537px;top:175px"
+         id="disCnt">
+         Dis: 0
+</div>
+    <div class="text"
+         style="left:620px;top:348px"
+         id="clock">
+         00:00
+</div>	
+	<div class="text"
+		style="left:1035px;top:6px"
+		id="visCnt">
+		Vis: 15
+</div>
+	<div class="text"
+		style="left:1130px;top:483px;font-size:30px;"
+		id="showEnergy">
+    0
+</div>
+	<div class="text"
+		style="left:1130px;top:404px;font-size:30px;opacity:0"
+		id="showVPs">
+    0
+</div>
+</div>
 
-c.addEventListener('mouseenter',()=>{preview.src=c.src;});
-c.addEventListener('dblclick',(e)=>{e.preventDefault();if(c.dataset.faceup==='0'){c.dataset.faceup='1';
-c.src=c.dataset.real;}else{c.dataset.faceup='0';
-c.src='C00.gif';}preview.src=c.src;});
-c.addEventListener('mousedown',(e)=>{if(e.button!==0)return;activeCard=c;
-dragOffsetX=e.offsetX;
-dragOffsetY=e.offsetY;
-c.style.zIndex=++topZ;
-e.preventDefault();});
-table.appendChild(c);}document.addEventListener('mousemove',(e)=>{if(activeCard===null)return;const r=table.getBoundingClientRect();
-activeCard.style.left=(e.clientX-r.left-dragOffsetX)+'px';
-activeCard.style.top=(e.clientY-r.top-dragOffsetY)+'px';});
-document.addEventListener('mouseup',()=>{activeCard=null;});
-for(let i=1;i<=50;i++){let n=String(i).padStart(2,'0');createCard('C'+n+'.gif');}let seconds=0;setInterval(()=>{seconds++;
-let m=Math.floor(seconds/60);
-let s=seconds%60;
-document.getElementById('clock').innerHTML=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');},1000);
+<script>
+
+/* =====================================================
+   SECTION 3 - GLOBAL VARIABLES
+   Voeg later nieuwe globale variabelen HIER toe
+   ===================================================== */
+
+const VISITORS =
+[
+    1,6,7,8,9,
+    14,15,17,19,
+    30,34,36,42,
+    48,49
+];
+let topZ = 1000;
+let activeCard = null;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+let cardsById = {};
+let VisitorCards = [];
+let VisitorsAdded = false;
+let Energy = 0;
+let VPs = 0;
+
+
+const table =
+    document.getElementById("table");
+
+const preview =
+    document.getElementById("preview");
+
+
+/* =====================================================
+   SECTION 4 - FUNCTIONS
+   Voeg later nieuwe functies HIER toe
+   ===================================================== */
+
+function createCard(cardName)
+{
+    const c =
+        document.createElement("img");
+
+    c.className = "card";
+
+    c.dataset.real = cardName;
+
+    c.dataset.faceup = "0";
+
+    c.src = "C00.gif";
+
+    c.style.left = "416px";
+    c.style.top  = "38px";
+
+
+    c.addEventListener("mouseenter", () =>
+    {
+        preview.src = c.src;
+    });
+
+
+    c.addEventListener("dblclick", (e) =>
+    {
+        e.preventDefault();
+
+        if(c.dataset.faceup === "0")
+        {
+            c.dataset.faceup = "1";
+
+            c.src =
+                c.dataset.real;
+        }
+        else
+        {
+            c.dataset.faceup = "0";
+
+            c.src =
+                "C00.gif";
+        }
+
+        preview.src = c.src;
+    });
+
+
+    c.addEventListener("mousedown", (e) =>
+    {
+        if(e.button !== 0)
+            return;
+
+        activeCard = c;
+
+        dragOffsetX = e.offsetX;
+        dragOffsetY = e.offsetY;
+
+        c.style.zIndex = ++topZ;
+
+        e.preventDefault();
+    });
+	
+	cardsById[cardName] = c;
+
+    table.appendChild(c);
+}
+
+function UpdateAreas()
+{
+    let DeckCount = 0;
+    let DiscardCount = 0;
+    let VisitorCount = 0;
+
+    let card;
+    let cx;
+    let cy;
+
+    for(let i=1;i<=50;i++)
+    {
+        let n =
+            "C" +
+            String(i).padStart(2,"0") +
+            ".gif";
+
+        card = cardsById[n];
+
+        if(!card)
+            continue;
+
+        cx = parseInt(card.style.left) + 44;
+        cy = parseInt(card.style.top) + 61;
+
+        // Deck Area
+        if(
+            cx >= 400 &&
+            cx <= 520 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            DeckCount++;
+        }
+
+        // Discard Area
+        if(
+            cx >= 409 &&
+            cx <= 549 &&
+            cy >= 179 &&
+            cy <= 339
+        )
+        {
+            DiscardCount++;
+        }
+
+        // Visitor Area
+        if(
+            VISITORS.includes(i) &&
+            cx >= 1079 &&
+            cx <= 1199 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            VisitorCount++;
+        }
+    }
+
+    document.getElementById("deckCnt").innerHTML =
+        "Deck: " + DeckCount;
+if(DeckCount === 33)
+{
+ //   alert("ShowVPArea wordt aangeroepen");
+    ShowVPArea();
+}
+
+    document.getElementById("disCnt").innerHTML =
+        "Dis: " + DiscardCount;
+
+	document.getElementById("visCnt").innerHTML =
+		"Vis: " + VisitorCount;
+
+	CheckDiscardTrigger();
+	
+}
+
+function SetupGame()
+{
+    let i;
+    let card;
+    let visitorList =
+    [
+        1,6,7,8,9,
+        14,15,17,19,
+        30,34,36,42,
+        48,49
+    ];
+
+    for(i=1;i<=50;i++)
+    {
+        let n =
+            "C" +
+            String(i).padStart(2,"0") +
+            ".gif";
+
+        card = cardsById[n];
+
+        if(!card)
+            continue;
+
+        if(visitorList.includes(i) || i===20)
+        {
+            card.style.left = "1095px";
+            card.style.top  = "38px";
+
+            card.style.zIndex = 1000 + i;
+        }
+        else
+        {
+            card.style.left = "416px";
+            card.style.top  = "38px";
+
+            card.style.zIndex = 1000 + i;
+        }
+    }
+
+ShuffleDeck();
+}
+
+function ShuffleDeck()
+{
+    let DeckList = [];
+
+    let i;
+    let card;
+    let cx;
+    let cy;
+
+    for(i=1;i<=50;i++)
+    {
+        let n =
+            "C" +
+            String(i).padStart(2,"0") +
+            ".gif";
+
+        card = cardsById[n];
+
+        if(!card)
+            continue;
+
+        cx = parseInt(card.style.left) + 44;
+        cy = parseInt(card.style.top) + 61;
+
+        if(
+            cx >= 400 &&
+            cx <= 520 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            DeckList.push(card);
+        }
+    }
+
+    for(i=DeckList.length-1;i>0;i--)
+    {
+        let rnd =
+            Math.floor(
+                Math.random() * (i+1)
+            );
+
+        let temp =
+            DeckList[i];
+
+        DeckList[i] =
+            DeckList[rnd];
+
+        DeckList[rnd] =
+            temp;
+    }
+
+    for(i=0;i<DeckList.length;i++)
+    {
+        card = DeckList[i];
+
+        card.style.left = "416px";
+        card.style.top  = "38px";
+
+        card.style.zIndex =
+            1000 + i;
+    }
+
+    UpdateAreas();
+}
+function UpdateEnergy()
+{
+    document.getElementById("showEnergy")
+        .innerHTML =
+        Energy;
+}
+function UpdateVPs()
+{
+    document.getElementById("showVPs")
+        .innerHTML =
+        VPs;
+}
+function CheckDiscardTrigger()
+{
+    if(VisitorsAdded)
+        return;
+
+    if(
+        parseInt(
+            document.getElementById("disCnt")
+            .innerHTML.replace("Dis: ","")
+        ) < 2
+    )
+        return;
+
+    VisitorsAdded = true;
+
+    MergeVisitorsIntoDeck();
+}
+
+function MergeVisitorsIntoDeck()
+{
+    let AvailableVisitors = [];
+
+    let i;
+    let card;
+    let cx;
+    let cy;
+
+    for(i=0;i<VISITORS.length;i++)
+    {
+        let nr = VISITORS[i];
+
+        let n =
+            "C" +
+            String(nr).padStart(2,"0") +
+            ".gif";
+
+        card = cardsById[n];
+
+        cx = parseInt(card.style.left) + 44;
+        cy = parseInt(card.style.top) + 61;
+
+        if(
+            cx >= 1079 &&
+            cx <= 1199 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            AvailableVisitors.push(card);
+        }
+    }
+
+    for(i=0;i<5;i++)
+    {
+        let rnd =
+            Math.floor(
+                Math.random() *
+                AvailableVisitors.length
+            );
+
+        card =
+            AvailableVisitors[rnd];
+
+        card.style.left = "416px";
+        card.style.top  = "38px";
+
+        AvailableVisitors.splice(rnd,1);
+    }
+
+    let HSH =
+        cardsById["C20.gif"];
+
+    HSH.style.left = "416px";
+    HSH.style.top  = "38px";
+
+    ShuffleDeck();
+/*
+    alert(
+        "5 Visitors + HSH toegevoegd aan Deck"
+    );
+*/	
+let RemainingVisitors = [];
+
+for(i=0;i<VISITORS.length;i++)
+{
+    let nr = VISITORS[i];
+
+    let n =
+        "C" +
+        String(nr).padStart(2,"0") +
+        ".gif";
+
+    card = cardsById[n];
+
+    cx = parseInt(card.style.left) + 44;
+    cy = parseInt(card.style.top) + 61;
+
+    if(
+        cx >= 1079 &&
+        cx <= 1199 &&
+        cy >= 10 &&
+        cy <= 170
+    )
+    {
+        RemainingVisitors.push(card);
+    }
+}
+
+for(i=RemainingVisitors.length-1;i>0;i--)
+{
+    let rnd =
+        Math.floor(Math.random()*(i+1));
+
+    let temp =
+        RemainingVisitors[i];
+
+    RemainingVisitors[i] =
+        RemainingVisitors[rnd];
+
+    RemainingVisitors[rnd] =
+        temp;
+}
+
+for(i=0;i<RemainingVisitors.length;i++)
+{
+    RemainingVisitors[i].style.zIndex =
+        3000 + i;
+}
+
+function ShowVPArea()
+{
+    document.getElementById("areaVPs")
+        .style.opacity = 1;
+
+    document.getElementById("butVPsMin")
+        .style.opacity = 1;
+
+    document.getElementById("butVPsPlus")
+        .style.opacity = 1;
+
+    document.getElementById("showVPs")
+        .style.opacity = 1;
+}
+}
+/* =====================================================
+   SECTION 5 - MOUSE EVENTS
+   ===================================================== */
+
+document.addEventListener("mousemove", (e) =>
+{
+    if(activeCard === null)
+        return;
+
+    const r =
+        table.getBoundingClientRect();
+
+    activeCard.style.left =
+        (e.clientX - r.left - dragOffsetX)
+        + "px";
+
+    activeCard.style.top =
+        (e.clientY - r.top - dragOffsetY)
+        + "px";
+});
+
+
+document.addEventListener("mouseup", () =>
+{
+    activeCard = null;
+
+    UpdateAreas();
+});
+
+document
+.getElementById("butEnergyPlus")
+.addEventListener("click", function()
+{
+    if(Energy < 99)
+    {
+        Energy++;
+
+        UpdateEnergy();
+    }
+});
+
+document
+.getElementById("butEnergyMin")
+.addEventListener("click", function()
+{
+    if(Energy > 0)
+    {
+        Energy--;
+
+        UpdateEnergy();
+    }
+});
+
+document
+.getElementById("butVPsPlus")
+.addEventListener("click", function()
+{
+    if(VPs <99)
+    {
+        VPs++;
+
+        UpdateVPs();
+    }
+});
+function ShowVPArea()
+{
+    document.getElementById("areaVPs")
+        .style.opacity = 1;
+
+    document.getElementById("butVPsMin")
+        .style.opacity = 1;
+
+    document.getElementById("butVPsPlus")
+        .style.opacity = 1;
+
+    document.getElementById("showVPs")
+        .style.opacity = 1;
+}
+document
+.getElementById("butVPsMin")
+.addEventListener("click", function()
+{
+    if(VPs > -2)
+    {
+        VPs--;
+
+        UpdateVPs();
+    }
+});
+
+
+/* =====================================================
+   SECTION 6 - CREATE CARDS
+   ===================================================== */
+
+for(let i=1;i<=50;i++)
+{
+    let n =
+        String(i).padStart(2,"0");
+
+    createCard(
+        "C" + n + ".gif"
+    );
+}
+SetupGame();
+UpdateEnergy();
+UpdateVPs();
+
+/* =====================================================
+   SECTION 7 - TIMER
+   ===================================================== */
+
+let seconds = 0;
+
+setInterval(() =>
+{
+    seconds++;
+
+    let m =
+        Math.floor(seconds / 60);
+
+    let s =
+        seconds % 60;
+
+    document.getElementById("clock")
+        .innerHTML =
+            String(m).padStart(2,"0")
+            + ":"
+            + String(s).padStart(2,"0");
+
+},1000);
+
 </script>
 </body>
 </html>
