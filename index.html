@@ -249,20 +249,26 @@ function createCard(cardName)
     });
 
 
-    c.addEventListener("mousedown", (e) =>
-    {
-        if(e.button !== 0)
-            return;
+c.addEventListener("pointerdown", (e) =>
+{
+    activeCard = c;
 
-        activeCard = c;
+    const rect =
+        c.getBoundingClientRect();
 
-        dragOffsetX = e.offsetX;
-        dragOffsetY = e.offsetY;
+    const tableRect =
+        table.getBoundingClientRect();
 
-        c.style.zIndex = ++topZ;
+    dragOffsetX =
+        e.clientX - rect.left;
 
-        e.preventDefault();
-    });
+    dragOffsetY =
+        e.clientY - rect.top;
+
+    c.style.zIndex = ++topZ;
+
+    e.preventDefault();
+});
 	
 	cardsById[cardName] = c;
 
@@ -615,7 +621,7 @@ function ShowVPArea()
    SECTION 5 - MOUSE EVENTS
    ===================================================== */
 
-document.addEventListener("mousemove", (e) =>
+document.addEventListener("pointermove", (e) =>
 {
     if(activeCard === null)
         return;
@@ -630,10 +636,12 @@ document.addEventListener("mousemove", (e) =>
     activeCard.style.top =
         (e.clientY - r.top - dragOffsetY)
         + "px";
+
+    e.preventDefault();
 });
 
 
-document.addEventListener("mouseup", () =>
+document.addEventListener("pointerup", () =>
 {
     activeCard = null;
 
