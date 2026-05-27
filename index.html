@@ -566,22 +566,23 @@ function MergeVisitorsIntoDeck()
         }
     }
 
-    for(i=0;i<5;i++)
-    {
-        let rnd =
-            Math.floor(
-                Math.random() *
-                AvailableVisitors.length
-            );
+let FlyingVisitors = [];
 
-        card =
-            AvailableVisitors[rnd];
+for(i=0;i<5;i++)
+{
+    let rnd =
+        Math.floor(
+            Math.random() *
+            AvailableVisitors.length
+        );
 
-        card.style.left = "416px";
-        card.style.top  = "38px";
+    card =
+        AvailableVisitors[rnd];
 
-        AvailableVisitors.splice(rnd,1);
-    }
+    FlyingVisitors.push(card);
+
+    AvailableVisitors.splice(rnd,1);
+}
 
     let HSH =
         cardsById["C20.gif"];
@@ -589,7 +590,9 @@ function MergeVisitorsIntoDeck()
     HSH.style.left = "416px";
     HSH.style.top  = "38px";
 
-    ShuffleDeck();
+    AnimateVisitorsToDeck(
+    FlyingVisitors
+);
 /*
     alert(
         "5 Visitors + HSH toegevoegd aan Deck"
@@ -879,21 +882,25 @@ function AnimateShuffleDeck()
         if(ShuffleStep % 2 === 0)
             dir = -1;
 
-        for(i=0;i<DeckList.length;i++)
-        {
-            DeckList[i].style.left =
-                (
-                    416 +
-                    dir *
-                    ((i % 2) * 25)
-                )
-                + "px";
-        }
+		for(i=0;i<DeckList.length;i++)
+		{
+			DeckList[i].style.zIndex =
+				5000 +
+				Math.floor(Math.random()*1000);
+
+				DeckList[i].style.left =
+        (
+            416 +
+            dir *
+            ((i % 2) * 25)
+        )
+        + "px";
+}
 
         ShuffleStep++;
 
         // aantal shuffle bewegingen
-        if(ShuffleStep >= 8)
+        if(ShuffleStep >= 14)
         {
             clearInterval(
                 ShuffleTimer
@@ -902,9 +909,70 @@ function AnimateShuffleDeck()
             ShuffleDeck();
         }
 
-    },80);
+    },120); // Snelheid > is langzamer
 }
+function AnimateVisitorsToDeck(VisitorList)
+{
+    let Finished = 0;
 
+    for(let i=0;i<VisitorList.length;i++)
+    {
+        let card =
+            VisitorList[i];
+
+        let StartX =
+            parseInt(card.style.left);
+
+        let StartY =
+            parseInt(card.style.top);
+
+        let EndX = 416;
+        let EndY = 38;
+
+        let Step = 0;
+
+        setTimeout(function()
+        {
+            let Timer =
+            setInterval(function()
+            {
+                Step++;
+
+                let t =
+                    Step / 50; // Snelheid vliegende Visitors > is langzamer
+
+                if(t > 1)
+                    t = 1;
+
+                card.style.left =
+                    (
+                        StartX +
+                        (EndX - StartX) * t
+                    ) + "px";
+
+                card.style.top =
+                    (
+                        StartY +
+                        (EndY - StartY) * t
+                    ) + "px";
+
+                if(t >= 1)
+                {
+                    clearInterval(Timer);
+
+                    Finished++;
+
+                    if(Finished >= VisitorList.length)
+                    {
+                        AnimateShuffleDeck();
+                    }
+                }
+
+            },20);
+
+        }, i * 100); // Spreiding tussen vliegende Visitors > meer spreiding
+    }
+}
 
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
