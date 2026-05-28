@@ -1106,6 +1106,30 @@ document.addEventListener("pointerup", () =>
 });
 
 document
+.getElementById("butEnergyPlus")
+.addEventListener("click", function()
+{
+    if(Energy < 99)
+    {
+        Energy++;
+
+        UpdateEnergy();
+    }
+});
+
+document
+.getElementById("butEnergyMin")
+.addEventListener("click", function()
+{
+    if(Energy > 0)
+    {
+        Energy--;
+
+        UpdateEnergy();
+    }
+});
+
+document
 .getElementById("butVPsPlus")
 .addEventListener("click", function()
 {
