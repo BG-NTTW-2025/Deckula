@@ -145,12 +145,12 @@ body
 		<img class="button" /* Goto High Score */
 		id="butExit"
 		src="But_Exit.gif"
-		style="left:1112px;top:355px">
+		style="left:1112px;top:347px">
 
 	<img class="button" /* Forfeit */
 		id="butEndGame"
 		src="But_EndGame.gif"
-		style="left:1112px;top:351px">	
+		style="left:1112px;top:347px">	
 
     <div class="text"
          style="left:513px;top:6px"
@@ -194,7 +194,7 @@ body
         height:58px;
         opacity:0;
         pointer-events:auto;
-        z-index:99999;
+        // z-index:99999;
     ">
 
 </div>
@@ -220,10 +220,13 @@ let dragOffsetY = 0;
 let cardsById = {};
 let VisitorCards = [];
 let VisitorsAdded = false;
-let Energy = 0;
+let Energy = 2;
 let VPs = 0;
 let CheatMode = true;
 let C14TokenValue = 0;
+let C14HoldTimer = null;
+let C14LongPress = false;
+let EndGameMoved = false;
 
 const C14Token =
     document.getElementById("C14Token");
@@ -378,10 +381,17 @@ function UpdateAreas()
 
     document.getElementById("deckCnt").innerHTML =
         "Deck: " + DeckCount;
-if(DeckCount === 0)
+if(
+    DeckCount === 0
+    &&
+    EndGameMoved === false
+)
 {
- //   alert("ShowVPArea wordt aangeroepen");
+    EndGameMoved = true;
+
     ShowVPArea();
+
+    MoveEndGameButtonDown();
 }
 
     document.getElementById("disCnt").innerHTML =
@@ -821,6 +831,9 @@ function UpdateC14Token()
         C14Token.style.left =
             (parseInt(C14.style.left) + 32)
             + "px";
+			
+		C14Token.style.zIndex =
+			parseInt(C14.style.zIndex) + 1;
 
         C14Token.style.top =
             (parseInt(C14.style.top) + 62)
@@ -974,6 +987,39 @@ function AnimateVisitorsToDeck(VisitorList)
     }
 }
 
+function MoveEndGameButtonDown()
+{
+    let But =
+        document.getElementById(
+            "butEndGame"
+        );
+
+    let TargetY = 531; // 351 + 180
+    let CurrentY =
+        parseInt(But.style.top);
+
+    let MoveTimer =
+    setInterval(function()
+    {
+        CurrentY += 6;
+
+        But.style.top =
+            CurrentY + "px";
+
+        if(CurrentY >= TargetY)
+        {
+            But.style.top =
+                TargetY + "px";
+
+            clearInterval(
+                MoveTimer
+            );
+        }
+
+    },10);
+}
+
+
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
    SECTION 5! - MOUSE EVENTS
@@ -1009,13 +1055,13 @@ document.addEventListener("pointerup", () =>
         let cy =
             parseInt(activeCard.style.top) + 61;
 
-	// Bottom Deck Area
-		if(
-		document.getElementById(
-        "areaToBottomDeck"
-		).style.opacity != 0
-		&&
-			cx >= 790 &&
+        // Bottom Deck Area
+        if(
+            document.getElementById(
+                "areaToBottomDeck"
+            ).style.opacity != 0
+            &&
+            cx >= 790 &&
             cx <= 910 &&
             cy >= 10 &&
             cy <= 170
@@ -1035,36 +1081,28 @@ document.addEventListener("pointerup", () =>
                 );
             }
         }
+
+        // C18 naar discard
+        if(
+            activeCard.dataset.real === "C18.gif"
+        )
+        {
+            if(
+                cx >= 409 &&
+                cx <= 549 &&
+                cy >= 179 &&
+                cy <= 339
+            )
+            {
+                HideBottomDeckArea();
+            }
+        }
     }
 
     activeCard = null;
 
     UpdateAreas();
-	UpdateC14Token();
-});
-
-document
-.getElementById("butEnergyPlus")
-.addEventListener("click", function()
-{
-    if(Energy < 99)
-    {
-        Energy++;
-
-        UpdateEnergy();
-    }
-});
-
-document
-.getElementById("butEnergyMin")
-.addEventListener("click", function()
-{
-    if(Energy > 0)
-    {
-        Energy--;
-
-        UpdateEnergy();
-    }
+    UpdateC14Token();
 });
 
 document
@@ -1144,27 +1182,41 @@ C14Token.addEventListener(
     "pointerdown",
     function(e)
 {
-    // LMK
-    if(e.button === 0)
-    {
-        if(C14TokenValue < 14)
-        {
-            C14TokenValue++;
-        }
-    }
+    C14LongPress = false;
 
-    // RMK
-    if(e.button === 2)
+    // LONG PRESS TIMER
+    C14HoldTimer =
+    setTimeout(function()
     {
-        e.preventDefault();
+        C14LongPress = true;
 
         if(C14TokenValue > 0)
         {
             C14TokenValue--;
         }
-    }
 
-    UpdateC14Token();
+        UpdateC14Token();
+
+    },500); // 500ms vasthouden
+});
+
+
+C14Token.addEventListener(
+    "pointerup",
+    function(e)
+{
+    clearTimeout(C14HoldTimer);
+
+    // gewone korte klik
+    if(C14LongPress === false)
+    {
+        if(C14TokenValue < 14)
+        {
+            C14TokenValue++;
+        }
+
+        UpdateC14Token();
+    }
 });
 
 document.addEventListener(
@@ -1191,7 +1243,7 @@ for(let i=1;i<=50;i++)
     );
 }
 SetupGame();
-/* ShowBottomDeckArea(); */ // TEST om Bottomdeack Area te laten zien tijdens startup
+/* ShowBottomDeckArea(); */ // TEST om Bottomdeck Area te laten zien tijdens startup
 UpdateEnergy();
 UpdateVPs();
 
