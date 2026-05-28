@@ -87,6 +87,86 @@ body
 
 <div id="table">
 
+<!-- INTRO SCREEN -->
+
+<div
+    id="introScreen"
+    style="
+        position:absolute;
+        left:0px;
+        top:0px;
+        width:1240px;
+        height:640px;
+        background:black;
+        z-index:200000;
+    ">
+
+    <img
+        src="Title.gif"
+        style="
+            position:absolute;
+            left:325px;
+            top:-25px;
+            width:290px;
+            height:143px;
+        ">
+
+<div
+    id="introText"
+    style="
+        position:absolute;
+        left:70px;
+        top:-30px;
+        width:825px;
+        height:450px;
+
+        color:#d8d1c0;
+
+        font-family:'Trebuchet MS', serif;
+        font-size:22px;
+        line-height:1.35;
+
+        padding:21px;
+
+        white-space:pre-line;
+    ">
+
+<div style="padding-left:50px;">
+<b>Main Objectives:</b>
+</div>
+<i><b>Survive:</b></i>
+Manage the "threat area" by limiting unwanted visitors (hunters/looters)
+to avoid losing.
+<i><b>Renovate/Score:</b></i>
+Build up your "home area" tableau with cards that provide victory points.
+<i><b>Manage Resources:</b></i>
+Decide whether to buy cards (spending energy) or discard them (gaining energy).
+The game ends in a win if you reach the end of the deck without being overwhelmed by visitors.
+
+</div>
+
+    <img
+        src="DeckulaPortrait7t.gif"
+        style="
+            position:absolute;
+            left:900px;
+            top:170px;
+            width:307px;
+            height:470px;
+        ">
+
+<img
+    class="button"
+    id="butStartGame"
+    src="IB_Play_Game.gif"
+    style="
+        left:960px;
+        top:20px;
+        width:250px;
+        height:50px;
+    ">
+</div>
+
     <img id="preview" src="C00.gif">
 
     <img class="area" src="Area_Home.gif"
@@ -1022,6 +1102,14 @@ function MoveEndGameButtonDown()
     },10);
 }
 
+// INTRO ITEMS
+function HideIntroScreen()
+{
+    document.getElementById(
+        "introScreen"
+    ).style.display = "none";
+}
+
 
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
@@ -1289,6 +1377,13 @@ document.querySelectorAll(".button")
 	
 });
 
+// INTRO ITEMS
+document
+.getElementById("butStartGame")
+.addEventListener("click", function()
+{
+    HideIntroScreen();
+});
 
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
