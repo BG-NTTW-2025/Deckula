@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <title>Deckula Prototype</title>
-
+<script defer
+src="https://cloud.umami.is/script.js"
+data-website-id="34c00f24-9584-4cfa-8b5e-b88dd715cdb0">
+</script>
 <style>
 
 /* =====================================================
@@ -145,6 +148,28 @@ The game ends in a win if you reach the end of the deck without being overwhelme
 
 </div>
 
+<div
+    id="showPlayerName"
+    style="
+        position:absolute;
+        left:30px;
+        top:510px;
+        width:170px;
+        height:40px;
+
+        color:#d8d1c0;
+
+        font-family:'Trebuchet MS', serif;
+        font-size:28px;
+        font-weight:bold;
+
+        overflow:hidden;
+        white-space:nowrap;
+    ">
+    Player
+</div>
+
+
     <img
         src="DeckulaPortrait7t.gif"
         style="
@@ -165,6 +190,58 @@ The game ends in a win if you reach the end of the deck without being overwhelme
         width:250px;
         height:50px;
     ">
+	<img
+    class="button"
+    id="butSelectLevel"
+    src="IB_Level_0.gif"
+    style="
+        left:960px;
+        top:70px;
+        width:250px;
+        height:50px;
+    ">
+		<img
+    class="button"
+    id="butNoVisitors"
+    src="IB_No_Visitors.gif"
+    style="
+        left:960px;
+        top:120px;
+        width:250px;
+        height:50px;
+		opacity:0">	
+	
+	<img
+    class="button"
+    id="butSaveName"
+    src="IB_Save_Name.gif"
+    style="
+        left:10px;
+        top:450px;
+        width:250px;
+        height:50px;
+    ">
+		<img
+    class="button"
+    id="butShowHS"
+    src="IB_Show_HS.gif"
+    style="
+        left:260px;
+        top:450px;
+        width:250px;
+        height:50px;
+    ">
+			<img
+    class="button"
+    id="butGameInfo"
+    src="IB_Game_Info.gif"
+    style="
+        left:510px;
+        top:450px;
+        width:250px;
+        height:50px;
+    ">
+	
 </div>
 
     <img id="preview" src="C00.gif">
@@ -311,6 +388,10 @@ let C14HoldTimer = null;
 let C14LongPress = false;
 let EndGameMoved = false;
 
+// Intro Scherm
+let PlayerName = "No Name";
+
+
 const C14Token =
     document.getElementById("C14Token");
 
@@ -319,6 +400,11 @@ const table =
 
 const preview =
     document.getElementById("preview");
+	
+// High Score
+let CurrentLevel = 0;
+let MysteryVisitors = 1;
+let HighScores = [];	
 
 
 /* =====================================================
@@ -1110,6 +1196,79 @@ function HideIntroScreen()
     ).style.display = "none";
 }
 
+function AskPlayerName()
+{
+    let n =
+        prompt(
+            "Enter your name",
+            PlayerName
+        );
+
+    if(n === null)
+        return;
+
+    n = n.trim();
+
+    if(n === "")
+    {
+        PlayerName = "No_Name";
+    }
+    else
+    {
+        PlayerName = n;
+    }
+
+    document.getElementById(
+        "showPlayerName"
+    ).innerHTML =
+        PlayerName;
+}
+
+function UpdateLevelButton()
+{
+    let But =
+        document.getElementById(
+            "butSelectLevel"
+        );
+
+    But.src =
+        "IB_Level_" +
+        CurrentLevel +
+        ".gif";
+}
+
+function NextLevel()
+{
+    CurrentLevel++;
+
+    if(CurrentLevel > 2)
+    {
+        CurrentLevel = 0;
+    }
+
+    UpdateLevelButton();
+}
+
+
+// High Score 
+function CreateEmptyHighScores()
+{
+    let i;
+
+    for(i=0;i<10;i++)
+    {
+        HighScores.push(
+        {
+            Nr:0,
+            Date:"",
+            Level:"",
+            Name:"",
+            Time:""
+        });
+    }
+}
+
+
 
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
@@ -1385,6 +1544,20 @@ document
     HideIntroScreen();
 });
 
+document
+.getElementById("butSaveName")
+.addEventListener("click", function()
+{
+    AskPlayerName();
+});
+
+document
+.getElementById("butSelectLevel")
+.addEventListener("click", function()
+{
+    NextLevel();
+});
+
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
    SECTION 6! - CREATE CARDS
@@ -1400,9 +1573,11 @@ for(let i=1;i<=50;i++)
     );
 }
 SetupGame();
+CreateEmptyHighScores();
 /* ShowBottomDeckArea(); */ // TEST om Bottomdeck Area te laten zien tijdens startup
 UpdateEnergy();
 UpdateVPs();
+UpdateLevelButton();
 
 /* =====================================================
    SECTION 7 - TIMER
