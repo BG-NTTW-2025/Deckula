@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Deckula Prototype</title>
+<script defer
+src="https://cloud.umami.is/script.js"
+data-website-id="34c00f24-9584-4cfa-8b5e-b88dd715cdb0">
+</script>
+<style>
+
+/* =====================================================
+   SECTION 1! - CSS
+   ===================================================== */
+
+body
+{
+    margin:0;
+    background:#222;
+    font-family:Arial;
+}
+
+#table
+{
+    position:relative;
+    width:1240px;
+    height:640px;
+    margin:auto;
+    background:#333;
+    overflow:hidden;
+}
+
+.area,
+.button
+{
+    position:absolute;
+}
+
+.card
+{
+    position:absolute;
+    width:88px;
+    height:123px;
+    cursor:pointer;
+
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+    touch-action:none;
+}
+
+#preview
+{
+    position:absolute;
+    left:17px;
+    top:61px;
+    width:352px;
+    height:492px;
+    border:1px solid #666;
+}
+
+.text
+{
+    position:absolute;
+    color:white;
+    font-weight:bold;
+}
+
+.button
+{
+    position:absolute;
+}
+
+.button:active
+{
+    opacity:0.5;
+}
+.button.pressed
+{
+    opacity:0.5 !important;
+}
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     SECTION 2! - PLAYFIELD
+     ===================================================== -->
+
+<div id="table">
+
+<!-- INTRO SCREEN -->
+
+<div
+    id="introScreen"
+    style="
+        position:absolute;
+        left:0px;
+        top:0px;
+        width:1240px;
+        height:640px;
+        background:black;
+        z-index:200000;
+    ">
+
+    <img
+        src="Title.gif"
+        style="
+            position:absolute;
+            left:325px;
+            top:-25px;
+            width:290px;
+            height:143px;
+        ">
+
+<div
+    id="introText"
+    style="
+        position:absolute;
+        left:70px;
+        top:-30px;
+        width:825px;
+        height:450px;
+
+        color:#d8d1c0;
+
+        font-family:'Trebuchet MS', serif;
+        font-size:22px;
+        line-height:1.35;
+
+        padding:21px;
+
+        white-space:pre-line;
+    ">
+
+<div style="padding-left:50px;">
+<b>Main Objectives:</b>
+</div>
+<i><b>Survive:</b></i>
+Manage the "threat area" by limiting unwanted visitors (hunters/looters)
+to avoid losing.
+<i><b>Renovate/Score:</b></i>
+Build up your "home area" tableau with cards that provide victory points.
+<i><b>Manage Resources:</b></i>
+Decide whether to buy cards (spending energy) or discard them (gaining energy).
+The game ends in a win if you reach the end of the deck without being overwhelmed by visitors.
+
+</div>
+
+    <img
+        src="DeckulaPortrait7t.gif"
+        style="
+            position:absolute;
+            left:900px;
+            top:170px;
+            width:307px;
+            height:470px;
+        ">
+
+<img
+    class="button"
+    id="butStartGame"
+    src="IB_Play_Game.gif"
+    style="
+        left:960px;
+        top:20px;
+        width:250px;
+        height:50px;
+    ">
+</div>
+
+    <img id="preview" src="C00.gif">
+
+    <img class="area" src="Area_Home.gif"
+         style="left:409px;top:360px">
+
+    <img class="area" src="Area_Discard.gif"
+         style="left:409px;top:179px">
+
+    <img class="area" src="Area_Threat.gif"
+         style="left:620px;top:179px">
+
+    <img class="area" src="Area_Deck.gif"
+         style="left:400px;top:10px">
+
+    <img class="area" src="Area_Visitors.gif"
+         style="left:1079px;top:10px">
+
+    <img class="area" src="Area_Killed.gif"
+         style="left:1079px;top:179px">
+		 
+	<img class="area" src="Area_Energy.gif"
+		style="left:1079px;top:460px">
+		
+	<img class="area"
+		id="areaToBottomDeck"
+		src="Area_Bottom.gif"
+		style="left:790px;top:10px;opacity:0">	
+		
+	<img class="area"
+		id="areaVPs"
+		src="Area_VPs.gif"
+		style="left:1079px;top:381px;opacity:0">
+		
+	<img class="button"
+		id="butEnergyMin"
+		src="Sign_Min.gif"
+		style="left:1089px;top:485px">
+
+	<img class="button"
+		id="butEnergyPlus"
+		src="Sign_Plus.gif"
+		style="left:1169px;top:485px">	
+		
+	<img class="button"
+		id="butVPsMin"
+		src="Sign_Min.gif"
+		style="left:1089px;top:406px;opacity:0">
+
+	<img class="button"
+		id="butVPsPlus"
+		src="Sign_Plus.gif"
+		style="left:1169px;top:406px;opacity:0">
+
+	<img class="button"
+		id="butShuffle"
+		src="But_Shuffle.gif"
+		style="left:527px;top:122px">	
+
+		<img class="button" /* Goto High Score */
+		id="butExit"
+		src="But_Exit.gif"
+		style="left:1112px;top:347px">
+
+	<img class="button" /* Forfeit */
+		id="butEndGame"
+		src="But_EndGame.gif"
+		style="left:1112px;top:347px">	
+
+    <div class="text"
+         style="left:513px;top:6px"
+         id="deckCnt">
+         Deck: 0
+</div>
+    <div class="text"
+         style="left:537px;top:175px"
+         id="disCnt">
+         Dis: 0
+</div>
+    <div class="text"
+         style="left:620px;top:348px"
+         id="clock">
+         00:00
+</div>	
+	<div class="text"
+		style="left:1035px;top:6px"
+		id="visCnt">
+		Vis: 15
+</div>
+	<div class="text"
+		style="left:1130px;top:483px;font-size:30px;"
+		id="showEnergy">
+    0
+</div>
+	<div class="text"
+		style="left:1130px;top:404px;font-size:30px;opacity:0"
+		id="showVPs">
+    0
+</div>
+
+<img
+    id="C14Token"
+    src="Token00.gif"
+    style="
+        position:absolute;
+        left:0px;
+        top:0px;
+        width:54px;
+        height:58px;
+        opacity:0;
+        pointer-events:auto;
+        // z-index:99999;
+    ">
+
+</div>
+
+<script>
+
+/* =====================================================
+   SECTION 3! - GLOBAL VARIABLES
+   Voeg later nieuwe globale variabelen HIER toe
+   ===================================================== */
+
+const VISITORS =
+[
+    1,6,7,8,9,
+    14,15,17,19,
+    30,34,36,42,
+    48,49
+];
+let topZ = 1000;
+let activeCard = null;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+let cardsById = {};
+let VisitorCards = [];
+let VisitorsAdded = false;
+let Energy = 2;
+let VPs = 0;
+let CheatMode = true;
+let C14TokenValue = 0;
+let C14HoldTimer = null;
+let C14LongPress = false;
+let EndGameMoved = false;
+
+const C14Token =
+    document.getElementById("C14Token");
+
+const table =
+    document.getElementById("table");
+
+const preview =
+    document.getElementById("preview");
+
+
+/* =====================================================
+   SECTION 4! - FUNCTIONS
+   Voeg later nieuwe functies HIER toe
+   ===================================================== */
+
+function createCard(cardName)
+{
+    const c =
+        document.createElement("img");
+
+    c.className = "card";
+	
+	c.draggable = false;
+
+    c.dataset.real = cardName;
+
+    c.dataset.faceup = "0";
+
+    c.src = "C00.gif";
+
+    c.style.left = "416px";
+    c.style.top  = "38px";
+
+
+    c.addEventListener("mouseenter", () =>
+    {
+        preview.src = c.src;
+		UpdateC14Token();
+    });
+
+
+    c.addEventListener("dblclick", (e) =>
+    {
+        e.preventDefault();
+
+        if(c.dataset.faceup === "0")
+        {
+            c.dataset.faceup = "1";
+
+            c.src =
+                c.dataset.real;
+        }
+        else
+        {
+            c.dataset.faceup = "0";
+
+            c.src =
+                "C00.gif";
+        }
+
+        preview.src = c.src;
+    });
+
+
+c.addEventListener("pointerdown", (e) =>
+{
+    CheckSpecialCard(c);
+	activeCard = c;
+
+    const rect =
+        c.getBoundingClientRect();
+
+    const tableRect =
+        table.getBoundingClientRect();
+
+    dragOffsetX =
+        e.clientX - rect.left;
+
+    dragOffsetY =
+        e.clientY - rect.top;
+
+    c.style.zIndex = ++topZ;
+
+    e.preventDefault();
+});
+	
+	cardsById[cardName] = c;
+
+    table.appendChild(c);
+}
+
+function UpdateAreas()
+{
+    let DeckCount = 0;
+    let DiscardCount = 0;
+    let VisitorCount = 0;
+
+    let card;
+    let cx;
+    let cy;
+
+    for(let i=1;i<=50;i++)
+    {
+        let n =
+            "C" +
+            String(i).padStart(2,"0") +
+            ".gif";
+
+        card = cardsById[n];
+
+        if(!card)
+            continue;
+
+        cx = parseInt(card.style.left) + 44;
+        cy = parseInt(card.style.top) + 61;
+
+        // Deck Area
+        if(
+            cx >= 400 &&
+            cx <= 520 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            DeckCount++;
+        }
+
+        // Discard Area
+        if(
+            cx >= 409 &&
+            cx <= 549 &&
+            cy >= 179 &&
+            cy <= 339
+        )
+        {
+            DiscardCount++;
+        }
+
+        // Visitor Area
+        if(
+            VISITORS.includes(i) &&
+            cx >= 1079 &&
+            cx <= 1199 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            VisitorCount++;
+        }
+    }
+
+    document.getElementById("deckCnt").innerHTML =
+        "Deck: " + DeckCount;
+if(
+    DeckCount === 0
+    &&
+    EndGameMoved === false
+)
+{
+    EndGameMoved = true;
+
+    ShowVPArea();
+
+    MoveEndGameButtonDown();
+}
+
+    document.getElementById("disCnt").innerHTML =
+        "Dis: " + DiscardCount;
+
+	document.getElementById("visCnt").innerHTML =
+		"Vis: " + VisitorCount;
+
+	CheckDiscardTrigger();
+	
+}
+
+function SetupGame()
+{
+    let i;
+    let card;
+    let visitorList =
+    [
+        1,6,7,8,9,
+        14,15,17,19,
+        30,34,36,42,
+        48,49
+    ];
+
+    for(i=1;i<=50;i++)
+    {
+        let n =
+            "C" +
+            String(i).padStart(2,"0") +
+            ".gif";
+
+        card = cardsById[n];
+
+        if(!card)
+            continue;
+
+        if(visitorList.includes(i) || i===20)
+        {
+            card.style.left = "1095px";
+            card.style.top  = "38px";
+
+            card.style.zIndex = 1000 + i;
+        }
+        else
+        {
+            card.style.left = "416px";
+            card.style.top  = "38px";
+
+            card.style.zIndex = 1000 + i;
+        }
+    }
+
+AnimateShuffleDeck();
+}
+
+function ShuffleDeck()
+{
+    let DeckList = [];
+
+    let i;
+    let card;
+    let cx;
+    let cy;
+
+    for(i=1;i<=50;i++)
+    {
+        let n =
+            "C" +
+            String(i).padStart(2,"0") +
+            ".gif";
+
+        card = cardsById[n];
+
+        if(!card)
+            continue;
+
+        cx = parseInt(card.style.left) + 44;
+        cy = parseInt(card.style.top) + 61;
+
+        if(
+            cx >= 400 &&
+            cx <= 520 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            DeckList.push(card);
+        }
+    }
+
+    for(i=DeckList.length-1;i>0;i--)
+    {
+        let rnd =
+            Math.floor(
+                Math.random() * (i+1)
+            );
+
+        let temp =
+            DeckList[i];
+
+        DeckList[i] =
+            DeckList[rnd];
+
+        DeckList[rnd] =
+            temp;
+    }
+
+    for(i=0;i<DeckList.length;i++)
+    {
+        card = DeckList[i];
+
+        card.style.left = "416px";
+        card.style.top  = "38px";
+
+        card.style.zIndex =
+            1000 + i;
+    }
+
+    UpdateAreas();
+}
+function UpdateEnergy()
+{
+    document.getElementById("showEnergy")
+        .innerHTML =
+        Energy;
+}
+function UpdateVPs()
+{
+    document.getElementById("showVPs")
+        .innerHTML =
+        VPs;
+}
+function CheckDiscardTrigger()
+{
+    if(VisitorsAdded)
+        return;
+
+    if(
+        parseInt(
+            document.getElementById("disCnt")
+            .innerHTML.replace("Dis: ","")
+        ) < 2
+    )
+        return;
+
+    VisitorsAdded = true;
+
+    MergeVisitorsIntoDeck();
+}
+
+function MergeVisitorsIntoDeck()
+{
+    let AvailableVisitors = [];
+
+    let i;
+    let card;
+    let cx;
+    let cy;
+
+    for(i=0;i<VISITORS.length;i++)
+    {
+        let nr = VISITORS[i];
+
+        let n =
+            "C" +
+            String(nr).padStart(2,"0") +
+            ".gif";
+
+        card = cardsById[n];
+
+        cx = parseInt(card.style.left) + 44;
+        cy = parseInt(card.style.top) + 61;
+
+        if(
+            cx >= 1079 &&
+            cx <= 1199 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            AvailableVisitors.push(card);
+        }
+    }
+
+let FlyingVisitors = [];
+
+for(i=0;i<5;i++)
+{
+    let rnd =
+        Math.floor(
+            Math.random() *
+            AvailableVisitors.length
+        );
+
+    card =
+        AvailableVisitors[rnd];
+
+    FlyingVisitors.push(card);
+
+    AvailableVisitors.splice(rnd,1);
+}
+
+    let HSH =
+        cardsById["C20.gif"];
+
+    HSH.style.left = "416px";
+    HSH.style.top  = "38px";
+
+    AnimateVisitorsToDeck(
+    FlyingVisitors
+);
+/*
+    alert(
+        "5 Visitors + HSH toegevoegd aan Deck"
+    );
+*/	
+let RemainingVisitors = [];
+
+for(i=0;i<VISITORS.length;i++)
+{
+    let nr = VISITORS[i];
+
+    let n =
+        "C" +
+        String(nr).padStart(2,"0") +
+        ".gif";
+
+    card = cardsById[n];
+
+    cx = parseInt(card.style.left) + 44;
+    cy = parseInt(card.style.top) + 61;
+
+    if(
+        cx >= 1079 &&
+        cx <= 1199 &&
+        cy >= 10 &&
+        cy <= 170
+    )
+    {
+        RemainingVisitors.push(card);
+    }
+}
+
+for(i=RemainingVisitors.length-1;i>0;i--)
+{
+    let rnd =
+        Math.floor(Math.random()*(i+1));
+
+    let temp =
+        RemainingVisitors[i];
+
+    RemainingVisitors[i] =
+        RemainingVisitors[rnd];
+
+    RemainingVisitors[rnd] =
+        temp;
+}
+
+for(i=0;i<RemainingVisitors.length;i++)
+{
+    RemainingVisitors[i].style.zIndex =
+        3000 + i;
+}
+
+function ShowVPArea()
+{
+    document.getElementById("areaVPs")
+        .style.opacity = 1;
+
+    document.getElementById("butVPsMin")
+        .style.opacity = 1;
+
+    document.getElementById("butVPsPlus")
+        .style.opacity = 1;
+
+    document.getElementById("showVPs")
+        .style.opacity = 1;
+}
+}
+
+function ShowBottomDeckArea()
+{
+    document.getElementById("areaToBottomDeck")
+        .style.opacity = 1;
+}
+
+function HideBottomDeckArea()
+{
+    document.getElementById("areaToBottomDeck")
+        .style.opacity = 0;
+}
+
+function CheckSpecialCard(card)
+{
+    if(
+        card.dataset.real === "C18.gif"
+        &&
+        card.dataset.faceup === "1" 
+    )
+    {
+        ShowBottomDeckArea();
+    }
+}
+
+
+function PutCardOnTop(cardNr)
+{
+    let n =
+        "C" +
+        String(cardNr).padStart(2,"0") +
+        ".gif";
+
+    let card =
+        cardsById[n];
+
+    if(!card)
+        return;
+
+    // kaart naar deck area
+    card.style.left = "516px";
+    card.style.top  = "38px";
+
+    // ALLE deck kaarten lager maken
+    for(let i=1;i<=50;i++)
+    {
+        let name =
+            "C" +
+            String(i).padStart(2,"0") +
+            ".gif";
+
+        let c =
+            cardsById[name];
+
+        if(!c)
+            continue;
+
+        let cx =
+            parseInt(c.style.left) + 44;
+
+        let cy =
+            parseInt(c.style.top) + 61;
+
+        if(
+            cx >= 400 &&
+            cx <= 520 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            c.style.zIndex = 1000 + i;
+        }
+    }
+
+    // gewenste kaart echt bovenop
+    card.style.zIndex = 99999;
+
+    UpdateAreas();
+}
+
+function SendVisitorToBottomOfDeck(card)
+{
+    let LowestZ = 999999;
+
+    let i;
+    let c;
+    let cx;
+    let cy;
+
+    // zoek laagste deck z-index
+    for(i=1;i<=50;i++)
+    {
+        let n =
+            "C" +
+            String(i).padStart(2,"0") +
+            ".gif";
+
+        c = cardsById[n];
+
+        if(!c)
+            continue;
+
+        cx = parseInt(c.style.left) + 44;
+        cy = parseInt(c.style.top) + 61;
+
+        if(
+            cx >= 400 &&
+            cx <= 520 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            let z =
+                parseInt(c.style.zIndex);
+
+            if(z < LowestZ)
+            {
+                LowestZ = z;
+            }
+        }
+    }
+
+    // plaats kaart in deck
+    card.style.left = "416px";
+    card.style.top  = "38px";
+
+    // onderkant van deck
+    card.style.zIndex =
+        LowestZ - 1;
+
+    HideBottomDeckArea();
+	card.dataset.faceup = "0";
+	card.src = "C00.gif";
+    UpdateAreas();
+}
+
+function UpdateC14Token()
+{
+    let C14 =
+        cardsById["C14.gif"];
+
+    if(!C14)
+        return;
+
+    let cx =
+        parseInt(C14.style.left) + 44;
+
+    let cy =
+        parseInt(C14.style.top) + 61;
+
+	// zichtbaar zolang C14 faceup is
+		if(
+		C14.dataset.faceup === "1"
+	)
+    {
+        C14Token.style.opacity = 1;
+
+        C14Token.style.left =
+            (parseInt(C14.style.left) + 32)
+            + "px";
+			
+		C14Token.style.zIndex =
+			parseInt(C14.style.zIndex) + 1;
+
+        C14Token.style.top =
+            (parseInt(C14.style.top) + 62)
+            + "px";
+
+        C14Token.src =
+            "Token" +
+            String(C14TokenValue)
+            .padStart(2,"0")
+            + ".gif";
+    }
+    else
+    {
+        C14Token.style.opacity = 0;
+    }
+}
+function AnimateShuffleDeck()
+{
+    let DeckList = [];
+
+    let i;
+    let card;
+    let cx;
+    let cy;
+
+    let ShuffleStep = 0;
+
+    for(i=1;i<=50;i++)
+    {
+        let n =
+            "C" +
+            String(i).padStart(2,"0") +
+            ".gif";
+
+        card = cardsById[n];
+
+        if(!card)
+            continue;
+
+        cx = parseInt(card.style.left) + 44;
+        cy = parseInt(card.style.top) + 61;
+
+        if(
+            cx >= 400 &&
+            cx <= 520 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            DeckList.push(card);
+        }
+    }
+
+    let ShuffleTimer =
+    setInterval(function()
+    {
+        let dir = 1;
+
+        if(ShuffleStep % 2 === 0)
+            dir = -1;
+
+		for(i=0;i<DeckList.length;i++)
+		{
+			DeckList[i].style.zIndex =
+				5000 +
+				Math.floor(Math.random()*1000);
+
+				DeckList[i].style.left =
+        (
+            416 +
+            dir *
+            ((i % 2) * 25)
+        )
+        + "px";
+}
+
+        ShuffleStep++;
+
+        // aantal shuffle bewegingen
+        if(ShuffleStep >= 14)
+        {
+            clearInterval(
+                ShuffleTimer
+            );
+
+            ShuffleDeck();
+        }
+
+    },120); // Snelheid > is langzamer
+}
+function AnimateVisitorsToDeck(VisitorList)
+{
+    let Finished = 0;
+
+    for(let i=0;i<VisitorList.length;i++)
+    {
+        let card =
+            VisitorList[i];
+
+        let StartX =
+            parseInt(card.style.left);
+
+        let StartY =
+            parseInt(card.style.top);
+
+        let EndX = 416;
+        let EndY = 38;
+
+        let Step = 0;
+
+        setTimeout(function()
+        {
+            let Timer =
+            setInterval(function()
+            {
+                Step++;
+
+                let t =
+                    Step / 50; // Snelheid vliegende Visitors > is langzamer
+
+                if(t > 1)
+                    t = 1;
+
+                card.style.left =
+                    (
+                        StartX +
+                        (EndX - StartX) * t
+                    ) + "px";
+
+                card.style.top =
+                    (
+                        StartY +
+                        (EndY - StartY) * t
+                    ) + "px";
+
+                if(t >= 1)
+                {
+                    clearInterval(Timer);
+
+                    Finished++;
+
+                    if(Finished >= VisitorList.length)
+                    {
+                        AnimateShuffleDeck();
+                    }
+                }
+
+            },20);
+
+        }, i * 100); // Spreiding tussen vliegende Visitors > meer spreiding
+    }
+}
+
+function MoveEndGameButtonDown()
+{
+    let But =
+        document.getElementById(
+            "butEndGame"
+        );
+
+    let TargetY = 531; // 351 + 180
+    let CurrentY =
+        parseInt(But.style.top);
+
+    let MoveTimer =
+    setInterval(function()
+    {
+        CurrentY += 6;
+
+        But.style.top =
+            CurrentY + "px";
+
+        if(CurrentY >= TargetY)
+        {
+            But.style.top =
+                TargetY + "px";
+
+            clearInterval(
+                MoveTimer
+            );
+        }
+
+    },10);
+}
+
+// INTRO ITEMS
+function HideIntroScreen()
+{
+    document.getElementById(
+        "introScreen"
+    ).style.display = "none";
+}
+
+
+/* Nieuwe Functies hier direct boven plaatsen */
+/* =====================================================
+   SECTION 5! - MOUSE EVENTS
+   ===================================================== */
+
+document.addEventListener("pointermove", (e) =>
+{
+    if(activeCard === null)
+        return;
+
+    const r =
+        table.getBoundingClientRect();
+
+    activeCard.style.left =
+        (e.clientX - r.left - dragOffsetX)
+        + "px";
+
+    activeCard.style.top =
+        (e.clientY - r.top - dragOffsetY)
+        + "px";
+	UpdateC14Token();
+    e.preventDefault();
+});
+
+
+document.addEventListener("pointerup", () =>
+{
+    if(activeCard !== null)
+    {
+        let cx =
+            parseInt(activeCard.style.left) + 44;
+
+        let cy =
+            parseInt(activeCard.style.top) + 61;
+
+        // Bottom Deck Area
+        if(
+            document.getElementById(
+                "areaToBottomDeck"
+            ).style.opacity != 0
+            &&
+            cx >= 790 &&
+            cx <= 910 &&
+            cy >= 10 &&
+            cy <= 170
+        )
+        {
+            let nr =
+                parseInt(
+                    activeCard.dataset.real
+                    .replace("C","")
+                    .replace(".gif","")
+                );
+
+            if(VISITORS.includes(nr))
+            {
+                SendVisitorToBottomOfDeck(
+                    activeCard
+                );
+            }
+        }
+
+        // C18 naar discard
+        if(
+            activeCard.dataset.real === "C18.gif"
+        )
+        {
+            if(
+                cx >= 409 &&
+                cx <= 549 &&
+                cy >= 179 &&
+                cy <= 339
+            )
+            {
+                HideBottomDeckArea();
+            }
+        }
+    }
+
+    activeCard = null;
+
+    UpdateAreas();
+    UpdateC14Token();
+});
+
+document
+.getElementById("butEnergyPlus")
+.addEventListener("click", function()
+{
+    if(Energy < 99)
+    {
+        Energy++;
+
+        UpdateEnergy();
+    }
+});
+
+document
+.getElementById("butEnergyMin")
+.addEventListener("click", function()
+{
+    if(Energy > 0)
+    {
+        Energy--;
+
+        UpdateEnergy();
+    }
+});
+
+document
+.getElementById("butVPsPlus")
+.addEventListener("click", function()
+{
+    if(VPs <99)
+    {
+        VPs++;
+
+        UpdateVPs();
+    }
+});
+function ShowVPArea()
+{
+    document.getElementById("areaVPs")
+        .style.opacity = 1;
+
+    document.getElementById("butVPsMin")
+        .style.opacity = 1;
+
+    document.getElementById("butVPsPlus")
+        .style.opacity = 1;
+
+    document.getElementById("showVPs")
+        .style.opacity = 1;
+}
+document
+.getElementById("butVPsMin")
+.addEventListener("click", function()
+{
+    if(VPs > -2)
+    {
+        VPs--;
+
+        UpdateVPs();
+    }
+});
+
+document
+.getElementById("butShuffle")
+.addEventListener("click", function()
+{
+    AnimateShuffleDeck();
+});
+
+document
+.getElementById("areaToBottomDeck")
+.addEventListener("click", function()
+{
+    HideBottomDeckArea();
+});
+
+document.addEventListener("keydown", function(e)
+{
+    if(!CheatMode)
+        return;
+
+    if(e.shiftKey)
+    {
+        let nr =
+            prompt("Welke kaart? 1-50");
+
+        if(nr === null)
+            return;
+
+        nr = parseInt(nr);
+
+        if(nr >= 1 && nr <= 50)
+        {
+            PutCardOnTop(nr);
+        }
+    }
+});
+
+C14Token.addEventListener(
+    "pointerdown",
+    function(e)
+{
+    C14LongPress = false;
+
+    // LONG PRESS TIMER
+    C14HoldTimer =
+    setTimeout(function()
+    {
+        C14LongPress = true;
+
+        if(C14TokenValue > 0)
+        {
+            C14TokenValue--;
+        }
+
+        UpdateC14Token();
+
+    },500); // 500ms vasthouden
+});
+
+
+C14Token.addEventListener(
+    "pointerup",
+    function(e)
+{
+    clearTimeout(C14HoldTimer);
+
+    // gewone korte klik
+    if(C14LongPress === false)
+    {
+        if(C14TokenValue < 14)
+        {
+            C14TokenValue++;
+        }
+
+        UpdateC14Token();
+    }
+});
+
+document.addEventListener(
+    "contextmenu",
+    function(e)
+{
+    if(e.target === C14Token)
+    {
+        e.preventDefault();
+    }
+});
+
+// alle buttons press effect
+document.querySelectorAll(".button")
+.forEach(function(btn)
+{
+    btn.addEventListener(
+        "pointerdown",
+        function()
+    {
+        btn.classList.add(
+            "pressed"
+        );
+    });
+
+    btn.addEventListener(
+        "pointerup",
+        function()
+    {
+        btn.classList.remove(
+            "pressed"
+        );
+    });
+
+    btn.addEventListener(
+        "pointerleave",
+        function()
+    {
+        btn.classList.remove(
+            "pressed"
+        );
+    });
+	
+});
+
+// INTRO ITEMS
+document
+.getElementById("butStartGame")
+.addEventListener("click", function()
+{
+    HideIntroScreen();
+});
+
+/* Nieuwe Functies hier direct boven plaatsen */
+/* =====================================================
+   SECTION 6! - CREATE CARDS
+   ===================================================== */
+
+for(let i=1;i<=50;i++)
+{
+    let n =
+        String(i).padStart(2,"0");
+
+    createCard(
+        "C" + n + ".gif"
+    );
+}
+SetupGame();
+/* ShowBottomDeckArea(); */ // TEST om Bottomdeck Area te laten zien tijdens startup
+UpdateEnergy();
+UpdateVPs();
+
+/* =====================================================
+   SECTION 7 - TIMER
+   ===================================================== */
+
+let seconds = 0;
+
+setInterval(() =>
+{
+    seconds++;
+
+    let m =
+        Math.floor(seconds / 60);
+
+    let s =
+        seconds % 60;
+
+    document.getElementById("clock")
+        .innerHTML =
+            String(m).padStart(2,"0")
+            + ":"
+            + String(s).padStart(2,"0");
+
+},1000);
+
+</script>
+</body>
+</html>
