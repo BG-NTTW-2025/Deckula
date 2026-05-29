@@ -148,6 +148,28 @@ The game ends in a win if you reach the end of the deck without being overwhelme
 
 </div>
 
+<div
+    id="showPlayerName"
+    style="
+        position:absolute;
+        left:10px;
+        top:520px;
+        width:170px;
+        height:40px;
+
+        color:#d8d1c0;
+
+        font-family:'Trebuchet MS', serif;
+        font-size:28px;
+        font-weight:bold;
+
+        overflow:hidden;
+        white-space:nowrap;
+    ">
+    Player
+</div>
+
+
     <img
         src="DeckulaPortrait7t.gif"
         style="
@@ -358,6 +380,7 @@ let C14LongPress = false;
 let EndGameMoved = false;
 let CurrentLevel = 1;
 let MysteryVisitors = 1;
+let PlayerName = "Player";
 
 const C14Token =
     document.getElementById("C14Token");
@@ -1274,6 +1297,30 @@ function NextLevel()
     UpdateMysteryVisitors();
 }
 
+function AskPlayerName()
+{
+    let n =
+        prompt(
+            "Enter your name",
+            PlayerName
+        );
+
+    if(n === null)
+        return;
+
+    n = n.trim();
+
+    if(n === "")
+        return;
+
+    PlayerName = n;
+
+    document.getElementById(
+        "showPlayerName"
+    ).innerHTML =
+        PlayerName;
+}
+
 
 
 /* Nieuwe Functies hier direct boven plaatsen */
@@ -1555,6 +1602,13 @@ document
 .addEventListener("click", function()
 {
     NextLevel();
+});
+
+document
+.getElementById("butSaveName")
+.addEventListener("click", function()
+{
+    AskPlayerName();
 });
 
 
