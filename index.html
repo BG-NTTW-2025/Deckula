@@ -709,20 +709,81 @@ function MergeVisitorsIntoDeck()
 
 let FlyingVisitors = [];
 
-for(i=0;i<5;i++)
+// vaste visitors
+let FixedVisitors = [];
+
+// mystery pool
+let MysteryPool =
+[
+    1,6,7,8,9,
+    14,15,17,19,
+    30,34,36,42,
+    48,49
+];
+
+// LEVEL 1
+if(CurrentLevel === 1)
+{
+    FixedVisitors =
+    [
+        15,
+        19,
+        49,
+        9
+    ];
+}
+
+// LEVEL 2
+else if(CurrentLevel === 2)
+{
+    FixedVisitors =
+    [
+        15,
+        49
+    ];
+}
+
+// voeg vaste visitors toe
+for(i=0;i<FixedVisitors.length;i++)
+{
+    let n =
+        "C" +
+        String(FixedVisitors[i])
+        .padStart(2,"0") +
+        ".gif";
+
+    FlyingVisitors.push(
+        cardsById[n]
+    );
+}
+
+// hoeveel mystery visitors nodig
+let NeedMystery =
+    MysteryVisitors;
+
+// random mystery visitors toevoegen
+for(i=0;i<NeedMystery;i++)
 {
     let rnd =
         Math.floor(
             Math.random() *
-            AvailableVisitors.length
+            MysteryPool.length
         );
 
-    card =
-        AvailableVisitors[rnd];
+    let nr =
+        MysteryPool[rnd];
 
-    FlyingVisitors.push(card);
+    let n =
+        "C" +
+        String(nr)
+        .padStart(2,"0") +
+        ".gif";
 
-    AvailableVisitors.splice(rnd,1);
+    FlyingVisitors.push(
+        cardsById[n]
+    );
+
+    MysteryPool.splice(rnd,1);
 }
 
     let HSH =
