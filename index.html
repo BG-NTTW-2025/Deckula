@@ -148,28 +148,6 @@ The game ends in a win if you reach the end of the deck without being overwhelme
 
 </div>
 
-<div
-    id="showPlayerName"
-    style="
-        position:absolute;
-        left:30px;
-        top:510px;
-        width:170px;
-        height:40px;
-
-        color:#d8d1c0;
-
-        font-family:'Trebuchet MS', serif;
-        font-size:28px;
-        font-weight:bold;
-
-        overflow:hidden;
-        white-space:nowrap;
-    ">
-    Player
-</div>
-
-
     <img
         src="DeckulaPortrait7t.gif"
         style="
@@ -190,26 +168,17 @@ The game ends in a win if you reach the end of the deck without being overwhelme
         width:250px;
         height:50px;
     ">
-	<img
+
+<img
     class="button"
-    id="butSelectLevel"
-    src="IB_Level_0.gif"
+    id="butLevel"
+    src="Level_1.gif"
     style="
-        left:960px;
-        top:70px;
-        width:250px;
-        height:50px;
-    ">
-		<img
-    class="button"
-    id="butNoVisitors"
-    src="IB_No_Visitors.gif"
-    style="
-        left:960px;
-        top:120px;
-        width:250px;
-        height:50px;
-		opacity:0">	
+        left:690px;
+        top:20px;
+        width:291px;
+        height:114px;
+    ">	
 	
 	<img
     class="button"
@@ -387,10 +356,8 @@ let C14TokenValue = 0;
 let C14HoldTimer = null;
 let C14LongPress = false;
 let EndGameMoved = false;
-
-// Intro Scherm
-let PlayerName = "No Name";
-
+let CurrentLevel = 1;
+let MysteryVisitors = 1;
 
 const C14Token =
     document.getElementById("C14Token");
@@ -400,11 +367,6 @@ const table =
 
 const preview =
     document.getElementById("preview");
-	
-// High Score
-let CurrentLevel = 0;
-let MysteryVisitors = 1;
-let HighScores = [];	
 
 
 /* =====================================================
@@ -1196,76 +1158,59 @@ function HideIntroScreen()
     ).style.display = "none";
 }
 
-function AskPlayerName()
-{
-    let n =
-        prompt(
-            "Enter your name",
-            PlayerName
-        );
-
-    if(n === null)
-        return;
-
-    n = n.trim();
-
-    if(n === "")
-    {
-        PlayerName = "No_Name";
-    }
-    else
-    {
-        PlayerName = n;
-    }
-
-    document.getElementById(
-        "showPlayerName"
-    ).innerHTML =
-        PlayerName;
-}
-
 function UpdateLevelButton()
 {
     let But =
         document.getElementById(
-            "butSelectLevel"
+            "butLevel"
         );
 
     But.src =
-        "IB_Level_" +
+        "Level_" +
         CurrentLevel +
         ".gif";
+}
+
+function UpdateMysteryVisitors()
+{
+    // Level 1 = 1 MG
+    if(CurrentLevel === 1)
+    {
+        MysteryVisitors = 1;
+    }
+
+    // Level 2 = 3 MG
+    else if(CurrentLevel === 2)
+    {
+        MysteryVisitors = 3;
+    }
+
+    // Level 3 = 5 MG
+    else if(CurrentLevel === 3)
+    {
+        MysteryVisitors = 5;
+    }
+
+    // Level 4+ = 6+
+    else
+    {
+        MysteryVisitors =
+            CurrentLevel + 2;
+    }
 }
 
 function NextLevel()
 {
     CurrentLevel++;
 
-    if(CurrentLevel > 2)
+    if(CurrentLevel > 13)
     {
-        CurrentLevel = 0;
+        CurrentLevel = 1;
     }
 
     UpdateLevelButton();
-}
 
-
-// High Score 
-function CreateEmptyHighScores()
-{
-    let i;
-
-    for(i=0;i<10;i++)
-    {
-        HighScores.push(
-        {
-            Nr:0,
-            Date:"",
-            Level:"",
-            Name:"",
-            Time:""
-        });
-    }
+    UpdateMysteryVisitors();
 }
 
 
@@ -1545,18 +1490,13 @@ document
 });
 
 document
-.getElementById("butSaveName")
-.addEventListener("click", function()
-{
-    AskPlayerName();
-});
-
-document
-.getElementById("butSelectLevel")
+.getElementById("butLevel")
 .addEventListener("click", function()
 {
     NextLevel();
 });
+
+
 
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
@@ -1573,11 +1513,13 @@ for(let i=1;i<=50;i++)
     );
 }
 SetupGame();
-CreateEmptyHighScores();
 /* ShowBottomDeckArea(); */ // TEST om Bottomdeck Area te laten zien tijdens startup
 UpdateEnergy();
 UpdateVPs();
 UpdateLevelButton();
+UpdateMysteryVisitors();
+
+
 
 /* =====================================================
    SECTION 7 - TIMER
