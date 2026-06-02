@@ -377,7 +377,6 @@ let MysteryVisitors = 1;
 let GameStarted = false;
 let GamePaused = false;
 let PauseX = 0;
-let PauseStep = 0;
 let PauseDir = -1;
 
 let Rank_Nr =
@@ -1491,70 +1490,6 @@ function UpdateHighScores()
     }
 }
 
-function ResetHighScores()
-{
-    Scr_Level =
-    [
-        9,13,12,11,
-        10,9,8,7,6,5
-    ];
-
-    Scr_Nr =
-    [
-    2,3,5,6,3,7,
-    2,3,1,0
-    ];
-
-    Scr_Name =
-    [
-        "Zombie",
-		"Jan",
-        "Dracula",
-        "Renfield",
-        "Hunter",
-        "Visitor",
-        "Deckula",
-        "Bat",
-        "Wolf",
-        "Ghost"
-
-    ];
-
-    Scr_Time =
-    [
-        "11:18",        
-		"09:18",
-        "08:11",
-        "07:05",
-        "12:44",
-        "10:31",
-        "09:01",
-        "08:55",
-        "14:02",
-        "06:43"
-    ];
-
-    Scr_Date =
-    [
-        "21-05-2026",	
-        "30-05-2026",
-        "29-05-2026",
-        "28-05-2026",
-        "27-05-2026",
-        "26-05-2026",
-        "25-05-2026",
-        "24-05-2026",
-        "23-05-2026",
-        "22-05-2026"
-
-    ];
-
-    UpdateHighScores();
-}
-
-
-/*  Pause Screen */
-
 function ShowPauseScreen()
 {
     GamePaused = true;
@@ -1581,22 +1516,65 @@ function HidePauseScreen()
     ).style.display = "none";
 }
 
-function NextPausePage()
+function ResetHighScores()
 {
-    PauseStep++;
+    Scr_Level =
+    [
+        5,9,13,12,11,
+        10,9,8,7,6
+    ];
 
-    if(PauseStep > 6)
-    {
-        PauseStep = 0;
-    }
+    Scr_Nr =
+    [
+        15,14,13,12,11,
+        10,9,8,7,6
+    ];
 
-    PauseX =
-        PauseStep * -620;
+    Scr_Name =
+    [
+        "Zombie",
+		"Jan",
+        "Dracula",
+        "Renfield",
+        "Hunter",
+        "Visitor",
+        "Deckula",
+        "Bat",
+        "Wolf",
+        "Ghost"
 
-    document.getElementById(
-        "PauseScroller"
-    ).style.left =
-        PauseX + "px";
+    ];
+
+    Scr_Time =
+    [
+        "11:18",	
+        "09:18",
+        "08:11",
+        "07:05",
+        "12:44",
+        "10:31",
+        "09:01",
+        "08:55",
+        "14:02",
+        "06:43"
+
+    ];
+
+    Scr_Date =
+    [
+        "30-05-2026",
+        "29-05-2026",
+        "28-05-2026",
+        "27-05-2026",
+        "26-05-2026",
+        "25-05-2026",
+        "24-05-2026",
+        "23-05-2026",
+        "22-05-2026",
+        "21-05-2026"
+    ];
+
+    UpdateHighScores();
 }
 
 /* Nieuwe Functies hier direct boven plaatsen */
@@ -1916,13 +1894,13 @@ document
     HidePauseScreen();
 });
 
-
 document
 .getElementById("butResetHS")
 .addEventListener("click", function()
 {
     ResetHighScores();
 });
+
 
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
@@ -1989,17 +1967,6 @@ for(let i=0;i<10;i++)
 
 UpdateHighScores();
 
-setInterval(function()
-{
-    if(GamePaused === false)
-    {
-        return;
-    }
-
-    NextPausePage();
-
-},3000);
-
 /* =====================================================
    SECTION 7! - TIMER
    ===================================================== */
@@ -2033,6 +2000,36 @@ setInterval(() =>
 
 },1000);
 
+setInterval(function()
+{
+    let Img =
+        document.getElementById(
+            "PauseScroller"
+        );
+
+    if(
+        Img.style.display === "none"
+    )
+    {
+        return;
+    }
+
+    PauseX += PauseDir;
+
+    if(PauseX <= -3760)
+    {
+        PauseDir = 1;
+    }
+
+    if(PauseX >= 0)
+    {
+        PauseDir = -1;
+    }
+
+    Img.style.left =
+        PauseX + "px";
+
+},20); // = scroll speed Higher is slower
 
 
 </script>
