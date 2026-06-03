@@ -2,6 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 <title>Deckula Prototype</title>
 <script defer
 src="https://cloud.umami.is/script.js"
@@ -307,15 +309,31 @@ The game ends in a win if you reach the end of the deck without being overwhelme
     class="button"
     id="butMainMenu"
     src="HsB_MainMenu.gif"
-    style="left:370px;top:520px;width:250px;height:50px;
+    style="left:245px;top:520px;width:250px;height:50px;
 	display:none;z-index:250001;
     ">
 	
 	<img
     class="button"
+    id="butHSviewLM"
+    src="HsB_LevelMast.gif"
+    style="left:495px;top:520px;width:250px;height:50px;
+	display:none;z-index:250001;	
+    ">	
+	
+	<img
+    class="button"
+    id="butHSviewVPM"
+    src="HsB_VPMast.gif"
+    style="left:495px;top:520px;width:250px;height:50px;
+	display:none;z-index:250001;	
+    ">		
+	
+	<img
+    class="button"
     id="butResetHS"
     src="HsB_ResetHS.gif"
-    style="left:620px;top:520px;width:250px;height:50px;
+    style="left:745px;top:520px;width:250px;height:50px;
 	display:none;z-index:250001;	
     ">	
 
@@ -378,6 +396,7 @@ let GameStarted = false;
 let GamePaused = false;
 let PauseX = 0;
 let PauseDir = -1;
+let HS_View = 0;
 
 let Rank_Nr =
 [
@@ -399,7 +418,7 @@ let Scr_Nr =
 
 let Scr_Name =
 [
-    "Jan Dummy",
+    "Jan Start",
     "Dracula",
     "Renfield",
     "Hunter",
@@ -1410,6 +1429,10 @@ function ShowHighScores()
     document.getElementById(
         "butMainMenu"
     ).style.display = "block";
+	
+    document.getElementById(
+        "butHSviewVPM"
+    ).style.display = "block";	
 
     document.getElementById(
         "butResetHS"
@@ -1436,6 +1459,10 @@ function HideHighScores()
     document.getElementById(
         "butMainMenu"
     ).style.display = "none";
+	
+    document.getElementById(
+        "butHSviewVPM"
+    ).style.display = "none";	
 
     document.getElementById(
         "butResetHS"
@@ -1532,7 +1559,7 @@ function ResetHighScores()
 
     Scr_Name =
     [
-        "Zombie",
+        "Zombie Reset",
 		"Jan",
         "Dracula",
         "Renfield",
@@ -1576,6 +1603,24 @@ function ResetHighScores()
 
     UpdateHighScores();
 }
+
+function AddHighScore(
+    Level,
+    Score,
+    Time,
+    Date,
+    Name
+)
+{
+    Scr_Level.push(Level);
+    Scr_Nr.push(Score);
+    Scr_Time.push(Time);
+    Scr_Date.push(Date);
+    Scr_Name.push(Name);
+
+    UpdateHighScores();
+}
+
 
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
@@ -1967,6 +2012,22 @@ for(let i=0;i<10;i++)
 
 UpdateHighScores();
 
+
+UpdateLevelButton();
+UpdateMysteryVisitors();
+
+UpdateHighScores();
+/* temp new HS test 
+AddHighScore(
+    13,
+    5,
+    "12:34",
+    "02-06-2026",
+    "Jan de man"
+); 
+ alert(
+    Scr_Name[10] LAAT EEN ALERT POPUP ZIEN 
+); */
 /* =====================================================
    SECTION 7! - TIMER
    ===================================================== */
