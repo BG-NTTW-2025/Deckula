@@ -392,70 +392,30 @@ let C14LongPress = false;
 let EndGameMoved = false;
 let CurrentLevel = 1;
 let MysteryVisitors = 1;
+let PlayerName = "Player";
 let GameStarted = false;
 let GamePaused = false;
 let PauseX = 0;
 let PauseDir = -1;
-let HS_View = 0;
+let HS_View = 1; /* 0=LM Level_Master 1=VPM Victory Points Master */
+
+
+let Scr_Level = [];
+let Scr_Nr = [];
+let Scr_Name = [];
+let Scr_Time = [];
+let Scr_Date = [];
+
+let VPM_Level = [];
+let VPM_Nr = [];
+let VPM_Name = [];
+let VPM_Time = [];
+let VPM_Date = [];
 
 let Rank_Nr =
 [
     "01","02","03","04","05",
     "06","07","08","09","10"
-];
-
-let Scr_Level =
-[
-    3,1,2,2,1,
-    3,2,3,1,2
-];
-
-let Scr_Nr =
-[
-    3,5,6,3,7,
-    2,3,1,0,2
-];
-
-let Scr_Name =
-[
-    "Jan Start",
-    "Dracula",
-    "Renfield",
-    "Hunter",
-    "Visitor",
-    "Deckula",
-    "Bat",
-    "Wolf",
-    "Ghost",
-    "Zombie"
-];
-
-let Scr_Time =
-[
-    "09:18",
-    "08:11",
-    "07:05",
-    "12:44",
-    "10:31",
-    "09:01",
-    "08:55",
-    "14:02",
-    "06:43",
-    "11:18"
-];
-
-let Scr_Date =
-[
-    "30-05-2026",
-    "29-05-2026",
-    "28-05-2026",
-    "27-05-2026",
-    "26-05-2026",
-    "25-05-2026",
-    "24-05-2026",
-    "23-05-2026",
-    "22-05-2026",
-    "21-05-2026"
 ];
 
 
@@ -618,7 +578,7 @@ function UpdateAreas()
     document.getElementById("deckCnt").innerHTML =
         "Deck: " + DeckCount;
 if(
-    DeckCount === 0
+    DeckCount === 34
     &&
     EndGameMoved === false
 )
@@ -1429,23 +1389,48 @@ function ShowHighScores()
     document.getElementById(
         "butMainMenu"
     ).style.display = "block";
-	
+
     document.getElementById(
         "butHSviewVPM"
-    ).style.display = "block";	
+    ).style.display = "block";
 
     document.getElementById(
         "butResetHS"
     ).style.display = "block";
-	
-	document.getElementById(
+
+    document.getElementById(
         "HSTitle"
-    ).style.display = "block";	
+    ).style.display = "block";
 
     for(let i=0;i<10;i++)
     {
         document.getElementById(
             "HS" + i
+        ).style.display = "block";
+    }
+
+    if(HS_View == 1)
+    {
+        ShowVPHS();
+
+        document.getElementById(
+            "butHSviewLM"
+        ).style.display = "block";
+
+        document.getElementById(
+            "butHSviewVPM"
+        ).style.display = "none";
+    }
+    else
+    {
+        ShowLMHS();
+
+        document.getElementById(
+            "butHSviewLM"
+        ).style.display = "none";
+
+        document.getElementById(
+            "butHSviewVPM"
         ).style.display = "block";
     }
 }
@@ -1465,6 +1450,10 @@ function HideHighScores()
     ).style.display = "none";	
 
     document.getElementById(
+        "butHSviewLM"
+    ).style.display = "none";		
+	
+    document.getElementById(
         "butResetHS"
     ).style.display = "none";
 	
@@ -1483,8 +1472,50 @@ function HideHighScores()
 
 function UpdateHighScores()
 {
+
+if(HS_View == 0)
+{
+    document.getElementById(
+        "HSTitle"
+    ).innerHTML =
+    "Rank &emsp;&emsp; Level &emsp;Score &emsp;&emsp; Time &emsp;&emsp;&emsp;&emsp;Date &emsp;&emsp;&emsp;&emsp;   Player";
+}
+else
+{
+    document.getElementById(
+        "HSTitle"
+    ).innerHTML =
+    "Rank &emsp;&emsp; Score &emsp;Level &emsp;&emsp; Time &emsp;&emsp;&emsp;&emsp;Date &emsp;&emsp;&emsp;&emsp;   Player";
+}
+
     for(let i=0;i<10;i++)
     {
+	let Col1;
+	let Col2;
+if(HS_View == 0)
+{
+    Col1 =
+        String(
+            Scr_Level[i]
+        ).padStart(2,"0");
+
+    Col2 =
+        String(
+            Scr_Nr[i]
+        ).padStart(2,"0");
+}
+else
+{
+    Col1 =
+        String(
+            Scr_Nr[i]
+        ).padStart(2,"0");
+
+    Col2 =
+        String(
+            Scr_Level[i]
+        ).padStart(2,"0");
+}	
         document.getElementById(
             "HS" + i
         ).innerHTML =
@@ -1493,15 +1524,11 @@ function UpdateHighScores()
 
             + "&emsp;&emsp;&emsp;&emsp;"
 
-            + String(
-                Scr_Level[i]
-            ).padStart(2,"0")
+			+Col1
 
             + "&emsp;&emsp;  "
 
-            + String(
-                Scr_Nr[i]
-            ).padStart(2,"0")
+			+Col2
 
             + "&emsp;&emsp;&emsp;&emsp;"
 
@@ -1543,23 +1570,23 @@ function HidePauseScreen()
     ).style.display = "none";
 }
 
-function ResetHighScores()
+function ResetLMHS()
 {
-    Scr_Level =
+    LM_Level =
     [
-        5,9,13,12,11,
-        10,9,8,7,6
+        3,3,3,3,3,
+        3,3,3,3,3,0
     ];
 
-    Scr_Nr =
+    LM_Nr =
     [
-        15,14,13,12,11,
-        10,9,8,7,6
+        1,1,1,1,1,
+        1,1,1,1,1,0
     ];
 
-    Scr_Name =
+    LM_Name =
     [
-        "Zombie Reset",
+        "LM Reset",
 		"Jan",
         "Dracula",
         "Renfield",
@@ -1568,11 +1595,12 @@ function ResetHighScores()
         "Deckula",
         "Bat",
         "Wolf",
-        "Ghost"
+        "Ghost",
+		""
 
     ];
 
-    Scr_Time =
+    LM_Time =
     [
         "11:18",	
         "09:18",
@@ -1583,11 +1611,12 @@ function ResetHighScores()
         "09:01",
         "08:55",
         "14:02",
-        "06:43"
+        "06:43",
+		""
 
     ];
 
-    Scr_Date =
+    LM_Date =
     [
         "30-05-2026",
         "29-05-2026",
@@ -1598,10 +1627,74 @@ function ResetHighScores()
         "24-05-2026",
         "23-05-2026",
         "22-05-2026",
-        "21-05-2026"
+        "21-05-2026",
+		""
     ];
 
-    UpdateHighScores();
+}
+
+function ResetVPHS()
+{
+    VPM_Level =
+    [
+        3,6,2,4,3,
+        4,1,1,1,1,0
+    ];
+
+    VPM_Nr =
+    [
+        8,7,6,5,4,
+        3,2,1,1,1,0
+    ];
+
+    VPM_Name =
+    [
+        "VPM FU Reset",
+		"Jan",
+        "Dracula",
+        "Renfield",
+        "Hunter",
+        "Visitor",
+        "Deckula",
+        "Bat",
+        "Wolf",
+        "Ghost",
+		""
+
+    ];
+
+    VPM_Time =
+    [
+        "11:18",	
+        "09:18",
+        "08:11",
+        "07:05",
+        "12:44",
+        "10:31",
+        "09:01",
+        "08:55",
+        "14:02",
+        "06:43",
+		""
+
+    ];
+
+    VPM_Date =
+    [
+        "30-05-2026",
+        "29-05-2026",
+        "28-05-2026",
+        "27-05-2026",
+        "26-05-2026",
+        "25-05-2026",
+        "24-05-2026",
+        "23-05-2026",
+        "22-05-2026",
+        "21-05-2026",
+		""
+    ];
+
+
 }
 
 function AddHighScore(
@@ -1612,14 +1705,491 @@ function AddHighScore(
     Name
 )
 {
-    Scr_Level.push(Level);
-    Scr_Nr.push(Score);
-    Scr_Time.push(Time);
-    Scr_Date.push(Date);
-    Scr_Name.push(Name);
+    LM_Level.push(Level);
+    LM_Nr.push(Score);
+	LM_Time.push(Time);
+	LM_Date.push(Date);
+	LM_Time.push(Name);
 
     UpdateHighScores();
 }
+
+
+function ShowLMHS()
+{
+    Scr_Level = LM_Level;
+    Scr_Nr    = LM_Nr;
+    Scr_Name  = LM_Name;
+    Scr_Time  = LM_Time;
+    Scr_Date  = LM_Date;
+
+    UpdateHighScores();
+}
+
+function ShowVPHS()
+{
+    Scr_Level = VPM_Level;
+    Scr_Nr    = VPM_Nr;
+    Scr_Name  = VPM_Name;
+    Scr_Time  = VPM_Time;
+    Scr_Date  = VPM_Date;
+
+    UpdateHighScores();
+}
+
+function GetTodayDate()
+{
+    let D = new Date();
+
+    let Day =
+        String(D.getDate())
+        .padStart(2,"0");
+
+    let Month =
+        String(D.getMonth()+1)
+        .padStart(2,"0");
+
+    let Year =
+        D.getFullYear();
+
+    return Day +
+        "-" +
+        Month +
+        "-" +
+        Year;
+}
+
+function SwapLM(A,B)
+{
+    let Temp;
+
+    Temp = LM_Level[A];
+    LM_Level[A] = LM_Level[B];
+    LM_Level[B] = Temp;
+
+    Temp = LM_Nr[A];
+    LM_Nr[A] = LM_Nr[B];
+    LM_Nr[B] = Temp;
+
+    Temp = LM_Name[A];
+    LM_Name[A] = LM_Name[B];
+    LM_Name[B] = Temp;
+
+    Temp = LM_Time[A];
+    LM_Time[A] = LM_Time[B];
+    LM_Time[B] = Temp;
+
+    Temp = LM_Date[A];
+    LM_Date[A] = LM_Date[B];
+    LM_Date[B] = Temp;
+}
+
+function SortLM()
+{
+    let Pos;
+
+    Pos = 10;
+
+    while(Pos > 0)
+    {
+        if(
+            LM_Level[Pos] >
+            LM_Level[Pos-1]
+        )
+        {
+            SwapLM(
+                Pos,
+                Pos-1
+            );
+
+            Pos--;
+
+            continue;
+        }
+
+        if(
+            LM_Level[Pos] ==
+            LM_Level[Pos-1]
+            &&
+            LM_Nr[Pos] >
+            LM_Nr[Pos-1]
+        )
+        {
+            SwapLM(
+                Pos,
+                Pos-1
+            );
+
+            Pos--;
+
+            continue;
+        }
+
+        break;
+    }
+}
+
+function SwapVPM(A,B)
+{
+    let Temp;
+
+    Temp = VPM_Level[A];
+    VPM_Level[A] = VPM_Level[B];
+    VPM_Level[B] = Temp;
+
+    Temp = VPM_Nr[A];
+    VPM_Nr[A] = VPM_Nr[B];
+    VPM_Nr[B] = Temp;
+
+    Temp = VPM_Name[A];
+    VPM_Name[A] = VPM_Name[B];
+    VPM_Name[B] = Temp;
+
+    Temp = VPM_Time[A];
+    VPM_Time[A] = VPM_Time[B];
+    VPM_Time[B] = Temp;
+
+    Temp = VPM_Date[A];
+    VPM_Date[A] = VPM_Date[B];
+    VPM_Date[B] = Temp;
+}
+
+function SortVPM()
+{
+    let Pos;
+
+    Pos = 10;
+
+    while(Pos > 0)
+    {
+        if(
+            VPM_Nr[Pos] >
+            VPM_Nr[Pos-1]
+        )
+        {
+            SwapVPM(
+                Pos,
+                Pos-1
+            );
+
+            Pos--;
+
+            continue;
+        }
+
+        if(
+            VPM_Nr[Pos] ==
+            VPM_Nr[Pos-1]
+            &&
+            VPM_Level[Pos] >
+            VPM_Level[Pos-1]
+        )
+        {
+            SwapVPM(
+                Pos,
+                Pos-1
+            );
+
+            Pos--;
+
+            continue;
+        }
+
+        break;
+    }
+}
+
+function SwapVPM(A,B)
+{
+    let Temp;
+
+    Temp = VPM_Level[A];
+    VPM_Level[A] = VPM_Level[B];
+    VPM_Level[B] = Temp;
+
+    Temp = VPM_Nr[A];
+    VPM_Nr[A] = VPM_Nr[B];
+    VPM_Nr[B] = Temp;
+
+    Temp = VPM_Name[A];
+    VPM_Name[A] = VPM_Name[B];
+    VPM_Name[B] = Temp;
+
+    Temp = VPM_Time[A];
+    VPM_Time[A] = VPM_Time[B];
+    VPM_Time[B] = Temp;
+
+    Temp = VPM_Date[A];
+    VPM_Date[A] = VPM_Date[B];
+    VPM_Date[B] = Temp;
+}
+
+function SortVPM()
+{
+    let Pos;
+
+    Pos = 10;
+
+    while(Pos > 0)
+    {
+        if(
+            VPM_Nr[Pos] >
+            VPM_Nr[Pos-1]
+        )
+        {
+            SwapVPM(
+                Pos,
+                Pos-1
+            );
+
+            Pos--;
+
+            continue;
+        }
+
+        if(
+            VPM_Nr[Pos] ==
+            VPM_Nr[Pos-1]
+            &&
+            VPM_Level[Pos] >
+            VPM_Level[Pos-1]
+        )
+        {
+            SwapVPM(
+                Pos,
+                Pos-1
+            );
+
+            Pos--;
+
+            continue;
+        }
+
+        break;
+    }
+}
+
+function ResetForNewGame()
+{
+    Energy = 2;
+    VPs = 0;
+
+    seconds = 0;
+
+    VisitorsAdded = false;
+    EndGameMoved = false;
+
+    GamePaused = false;
+
+    C14TokenValue = 0;
+
+    document.getElementById(
+        "clock"
+    ).innerHTML =
+        "00:00";
+
+    UpdateEnergy();
+    UpdateVPs();
+    UpdateC14Token();
+ResetBoard();	
+}
+
+function ResetBoard()
+{
+    let i;
+    let card;
+
+    // alle kaarten face down
+    for(i=1;i<=50;i++)
+    {
+        let n =
+            "C" +
+            String(i).padStart(2,"0") +
+            ".gif";
+
+        card = cardsById[n];
+
+        if(!card)
+            continue;
+
+        card.dataset.faceup = "0";
+        card.src = "C00.gif";
+    }
+
+    // kaarten terug naar start
+    SetupGame();
+
+    // token reset
+    C14TokenValue = 0;
+    UpdateC14Token();
+
+    // bottom deck area uit
+    HideBottomDeckArea();
+
+    // VP area uit
+    document.getElementById(
+        "areaVPs"
+    ).style.opacity = 0;
+
+    document.getElementById(
+        "butVPsMin"
+    ).style.opacity = 0;
+
+    document.getElementById(
+        "butVPsPlus"
+    ).style.opacity = 0;
+
+    document.getElementById(
+        "showVPs"
+    ).style.opacity = 0;
+
+    // EndGame knop terug omhoog
+    document.getElementById(
+        "butEndGame"
+    ).style.top =
+        "347px";
+
+    EndGameMoved = false;
+    activeCard = null;
+	preview.src = "C00.gif";
+    UpdateAreas();
+}
+
+function SaveHighScores()
+{
+    localStorage.setItem(
+        "LM_Level",
+        JSON.stringify(LM_Level)
+    );
+
+    localStorage.setItem(
+        "LM_Nr",
+        JSON.stringify(LM_Nr)
+    );
+
+    localStorage.setItem(
+        "LM_Name",
+        JSON.stringify(LM_Name)
+    );
+
+    localStorage.setItem(
+        "LM_Time",
+        JSON.stringify(LM_Time)
+    );
+
+    localStorage.setItem(
+        "LM_Date",
+        JSON.stringify(LM_Date)
+    );
+
+    localStorage.setItem(
+        "VPM_Level",
+        JSON.stringify(VPM_Level)
+    );
+
+    localStorage.setItem(
+        "VPM_Nr",
+        JSON.stringify(VPM_Nr)
+    );
+
+    localStorage.setItem(
+        "VPM_Name",
+        JSON.stringify(VPM_Name)
+    );
+
+    localStorage.setItem(
+        "VPM_Time",
+        JSON.stringify(VPM_Time)
+    );
+
+    localStorage.setItem(
+        "VPM_Date",
+        JSON.stringify(VPM_Date)
+    );
+}
+
+function LoadHighScores()
+{
+    if(
+        localStorage.getItem(
+            "LM_Level"
+        ) === null
+    )
+    {
+        return;
+    }
+
+    LM_Level =
+        JSON.parse(
+            localStorage.getItem(
+                "LM_Level"
+            )
+        );
+
+    LM_Nr =
+        JSON.parse(
+            localStorage.getItem(
+                "LM_Nr"
+            )
+        );
+
+    LM_Name =
+        JSON.parse(
+            localStorage.getItem(
+                "LM_Name"
+            )
+        );
+
+    LM_Time =
+        JSON.parse(
+            localStorage.getItem(
+                "LM_Time"
+            )
+        );
+
+    LM_Date =
+        JSON.parse(
+            localStorage.getItem(
+                "LM_Date"
+            )
+        );
+
+    VPM_Level =
+        JSON.parse(
+            localStorage.getItem(
+                "VPM_Level"
+            )
+        );
+
+    VPM_Nr =
+        JSON.parse(
+            localStorage.getItem(
+                "VPM_Nr"
+            )
+        );
+
+    VPM_Name =
+        JSON.parse(
+            localStorage.getItem(
+                "VPM_Name"
+            )
+        );
+
+    VPM_Time =
+        JSON.parse(
+            localStorage.getItem(
+                "VPM_Time"
+            )
+        );
+
+    VPM_Date =
+        JSON.parse(
+            localStorage.getItem(
+                "VPM_Date"
+            )
+        );
+}
+
 
 
 /* Nieuwe Functies hier direct boven plaatsen */
@@ -1893,7 +2463,10 @@ document
 .getElementById("butStartGame")
 .addEventListener("click", function()
 {
-	GameStarted = true;
+    ResetForNewGame();
+
+    GameStarted = true;
+
     HideIntroScreen();
 });
 
@@ -1926,6 +2499,58 @@ document
 });
 
 document
+.getElementById("butResetHS")
+.addEventListener("click", function()
+{
+    if(HS_View == 1)
+    {
+        ResetVPHS();
+        ShowVPHS();
+    }
+    else
+    {
+        ResetLMHS();
+        ShowLMHS();
+    }
+});
+
+document
+.getElementById("butHSviewLM")
+.addEventListener("click", function()
+{
+    HS_View = 0;
+
+    document.getElementById(
+        "butHSviewLM"
+    ).style.display = "none";
+
+    document.getElementById(
+        "butHSviewVPM"
+    ).style.display = "block";
+
+    ShowLMHS();
+});
+
+document
+.getElementById("butHSviewVPM")
+.addEventListener("click", function()
+{
+    HS_View = 1;
+
+    document.getElementById(
+        "butHSviewVPM"
+    ).style.display = "none";
+
+    document.getElementById(
+        "butHSviewLM"
+    ).style.display = "block";
+
+    ShowVPHS();
+});
+
+
+
+document
 .getElementById("butPause")
 .addEventListener("click", function()
 {
@@ -1940,11 +2565,41 @@ document
 });
 
 document
-.getElementById("butResetHS")
+.getElementById("butExit")
 .addEventListener("click", function()
 {
-    ResetHighScores();
+    LM_Level[10] = CurrentLevel;
+    LM_Nr[10]    = VPs;
+
+    VPM_Level[10] = CurrentLevel;
+    VPM_Nr[10]    = VPs;
+	
+	LM_Name[10] = PlayerName;
+	LM_Time[10] = document.getElementById("clock").innerHTML;
+	LM_Date[10] = GetTodayDate();
+
+	VPM_Name[10] = PlayerName;
+	VPM_Time[10] = document.getElementById("clock").innerHTML;
+	VPM_Date[10] = GetTodayDate();
+SortLM();
+SortVPM();
+SaveHighScores();
+    document.getElementById(
+        "introScreen"
+    ).style.display = "block";	
+
 });
+
+document
+.getElementById("butEndGame") // Forfeit
+.addEventListener("click", function()
+{
+    document.getElementById(
+        "introScreen"
+    ).style.display = "block";
+});
+
+
 
 
 /* Nieuwe Functies hier direct boven plaatsen */
@@ -1968,12 +2623,31 @@ UpdateVPs();
 UpdateLevelButton();
 UpdateMysteryVisitors();
 
-
+/*
 document.getElementById(
     "HSTitle"
-).innerHTML =
+)
+if(HS_View == 0)
+{
+    document.getElementById(
+        "HSTitle"
+    ).innerHTML =
     "Rank &emsp;&emsp; Level &emsp;Score &emsp;&emsp; Time &emsp;&emsp;&emsp;&emsp;Date &emsp;&emsp;&emsp;&emsp;   Player";
-
+    alert(
+        "Level Score"
+    );
+}
+else
+{
+    document.getElementById(
+        "HSTitle"
+    ).innerHTML =
+    "Rank &emsp;&emsp; Score &emsp;Level &emsp;&emsp; Time &emsp;&emsp;&emsp;&emsp;Date &emsp;&emsp;&emsp;&emsp;   Player";
+    alert(
+        "Score Level"
+    );
+}
+*/
 for(let i=0;i<10;i++)
 {
     let HS =
@@ -2010,24 +2684,15 @@ for(let i=0;i<10;i++)
     table.appendChild(HS);
 }
 
-UpdateHighScores();
-
-
 UpdateLevelButton();
 UpdateMysteryVisitors();
 
+ResetLMHS();
+ResetVPHS();
+LoadHighScores();
 UpdateHighScores();
-/* temp new HS test 
-AddHighScore(
-    13,
-    5,
-    "12:34",
-    "02-06-2026",
-    "Jan de man"
-); 
- alert(
-    Scr_Name[10] LAAT EEN ALERT POPUP ZIEN 
-); */
+
+
 /* =====================================================
    SECTION 7! - TIMER
    ===================================================== */
