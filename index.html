@@ -1113,7 +1113,7 @@ function UpdateC14Token()
 		C14.dataset.faceup === "1"
 	)
     {
-	ShowC14Hint();
+	
         C14Token.style.opacity = 1;
 
         C14Token.style.left =
@@ -2223,13 +2223,13 @@ function LoadHighScores()
 
 function ShowC14Hint()
 {
-    if(C14HintDisabled)
-        return;
+if(C14HintDisabled)
+    return;
 
-    if(C14HintVisible)
-        return;
+if(C14HintVisible)
+    return;
 
-    C14HintVisible = true;
+    C14HintShown = true;
 
     document.getElementById(
         "C14Hint"
@@ -2663,12 +2663,23 @@ document
     document.getElementById(
         "introScreen"
     ).style.display = "block";
- alert(LM_Level[10]
-     
-); 
+
 });
 
+C14Token.addEventListener(
+    "mouseenter",
+    function()
+{
+    let C14 =
+        cardsById["C14.gif"];
 
+    if(
+        C14.dataset.faceup === "1"
+    )
+    {
+        ShowC14Hint();
+    }
+});
 
 
 /* Nieuwe Functies hier direct boven plaatsen */
