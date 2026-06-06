@@ -242,7 +242,7 @@ The game ends in a win if you reach the end of the deck without being overwhelme
 		src="But_Shuffle.gif"
 		style="left:527px;top:122px">	
 
-		<img class="button" /* Goto High Score */
+		<img class="button" /* Score VP */
 		id="butExit"
 		src="But_Exit.gif"
 		style="left:1112px;top:347px">
@@ -294,8 +294,36 @@ The game ends in a win if you reach the end of the deck without being overwhelme
     style="position:absolute;left:0px;top:0px;width:54px;height:58px;opacity:0;
         pointer-events:auto;// z-index:99999;
     ">
+	
+<div
+    id="C14Hint"
+    style="
+        position:absolute;
+        left:45px;
+        top:180px;
+        width:250px;
+        height:100px;
+background:rgba(20,20,20,0.85);
+border:3px solid rgb(190,180,150);
+color:rgb(190,180,150);
+        padding:20px;
+        z-index:500000;
+        display:none;
+    ">
+	
 
-</div>
+    <b>C14 Token Controls</b><br>
+    Short click = +1<br>
+    Long click = -1<br><br>
+    <input
+        type="checkbox"
+        id="C14HintCheck">
+
+    Don't show again this session
+
+</div>	
+
+
 
 /* High Scores and Failures */
 
@@ -398,6 +426,8 @@ let GamePaused = false;
 let PauseX = 0;
 let PauseDir = -1;
 let HS_View = 1; /* 0=LM Level_Master 1=VPM Victory Points Master */
+let C14HintDisabled = false;
+let C14HintVisible = false;
 
 
 let Scr_Level = [];
@@ -1083,6 +1113,7 @@ function UpdateC14Token()
 		C14.dataset.faceup === "1"
 	)
     {
+	ShowC14Hint();
         C14Token.style.opacity = 1;
 
         C14Token.style.left =
@@ -2190,6 +2221,41 @@ function LoadHighScores()
         );
 }
 
+function ShowC14Hint()
+{
+    if(C14HintDisabled)
+        return;
+
+    if(C14HintVisible)
+        return;
+
+    C14HintVisible = true;
+
+    document.getElementById(
+        "C14Hint"
+    ).style.display = "block";
+
+    setTimeout(function()
+    {
+        if(
+            document.getElementById(
+                "C14HintCheck"
+            ).checked
+        )
+        {
+            C14HintDisabled = true;
+        }
+
+        document.getElementById(
+            "C14Hint"
+        ).style.display = "none";
+
+        C14HintVisible = false;
+
+    },8000);
+}
+
+
 
 
 /* Nieuwe Functies hier direct boven plaatsen */
@@ -2597,6 +2663,9 @@ document
     document.getElementById(
         "introScreen"
     ).style.display = "block";
+ alert(LM_Level[10]
+     
+); 
 });
 
 
