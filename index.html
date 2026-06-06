@@ -942,21 +942,6 @@ for(i=0;i<RemainingVisitors.length;i++)
     RemainingVisitors[i].style.zIndex =
         3000 + i;
 }
-
-function ShowVPArea()
-{
-    document.getElementById("areaVPs")
-        .style.opacity = 1;
-
-    document.getElementById("butVPsMin")
-        .style.opacity = 1;
-
-    document.getElementById("butVPsPlus")
-        .style.opacity = 1;
-
-    document.getElementById("showVPs")
-        .style.opacity = 1;
-}
 }
 
 function ShowBottomDeckArea()
@@ -1740,7 +1725,7 @@ function AddHighScore(
     LM_Nr.push(Score);
 	LM_Time.push(Time);
 	LM_Date.push(Date);
-	LM_Time.push(Name);
+	LM_Name.push(Name);
 
     UpdateHighScores();
 }
@@ -1930,75 +1915,6 @@ function SortVPM()
     }
 }
 
-function SwapVPM(A,B)
-{
-    let Temp;
-
-    Temp = VPM_Level[A];
-    VPM_Level[A] = VPM_Level[B];
-    VPM_Level[B] = Temp;
-
-    Temp = VPM_Nr[A];
-    VPM_Nr[A] = VPM_Nr[B];
-    VPM_Nr[B] = Temp;
-
-    Temp = VPM_Name[A];
-    VPM_Name[A] = VPM_Name[B];
-    VPM_Name[B] = Temp;
-
-    Temp = VPM_Time[A];
-    VPM_Time[A] = VPM_Time[B];
-    VPM_Time[B] = Temp;
-
-    Temp = VPM_Date[A];
-    VPM_Date[A] = VPM_Date[B];
-    VPM_Date[B] = Temp;
-}
-
-function SortVPM()
-{
-    let Pos;
-
-    Pos = 10;
-
-    while(Pos > 0)
-    {
-        if(
-            VPM_Nr[Pos] >
-            VPM_Nr[Pos-1]
-        )
-        {
-            SwapVPM(
-                Pos,
-                Pos-1
-            );
-
-            Pos--;
-
-            continue;
-        }
-
-        if(
-            VPM_Nr[Pos] ==
-            VPM_Nr[Pos-1]
-            &&
-            VPM_Level[Pos] >
-            VPM_Level[Pos-1]
-        )
-        {
-            SwapVPM(
-                Pos,
-                Pos-1
-            );
-
-            Pos--;
-
-            continue;
-        }
-
-        break;
-    }
-}
 
 function ResetForNewGame()
 {
