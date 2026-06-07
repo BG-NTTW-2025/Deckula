@@ -173,7 +173,7 @@ The game ends in a win if you reach the end of the deck without being overwhelme
     class="button"
     id="butShowFailure"
     src="IB_Show_Failures.gif"
-    style="left:260px;top:500px;width:250px;height:50px;opacity:0.35
+    style="left:260px;top:500px;width:250px;height:50px;
     ">	
 			<img
     class="button"
@@ -373,6 +373,24 @@ color:rgb(190,180,150);
     ">
 </div>
 
+/* Brave Failures  */
+
+	<img 
+		id="Bravestable"
+		src="Bravesback.gif"
+		    style="position:absolute;left:0px;top:0px;width:1240px;height:640px;
+        display:none;z-index:250000;
+    ">
+	
+	<img
+    class="button"
+    id="butResetBF"
+    src="BfB_ResetBF.gif"
+    style="left:620px;top:520px;width:250px;height:50px;
+	display:none;z-index:250001;	
+    ">	
+
+
 /* PAUSE GAME*/
 
 	<img class="GamePaused"
@@ -441,6 +459,11 @@ let VPM_Nr = [];
 let VPM_Name = [];
 let VPM_Time = [];
 let VPM_Date = [];
+
+let Brave_Deck = [];
+let Brave_Name = [];
+let Brave_Time = [];
+let Brave_Date = [];
 
 let Rank_Nr =
 [
@@ -1371,6 +1394,11 @@ function AskPlayerName()
     if(n === "")
         return;
 
+    if(n.length > 11)
+    {
+        n = n.substring(0,11);
+    }
+
     PlayerName = n;
 
     document.getElementById(
@@ -1584,6 +1612,63 @@ function HidePauseScreen()
     document.getElementById(
         "ResumeGame"
     ).style.display = "none";
+}
+
+function ResetBraves()
+{
+
+    Brave_Deck =
+    [
+        44,44,44,44,44,
+        44,44,44,44,44
+    ];
+
+    Brave_Name =
+    [
+        "Player",
+		"Player",
+        "Player",
+        "Player",
+        "Player",
+        "Player",
+        "Player",
+        "Player",
+        "Player",
+        "Player"
+
+    ];
+
+    Brave_Time =
+    [
+        "60:00",	
+        "60:00",
+        "60:00",
+        "60:00",
+        "60:00",
+        "60:00",
+        "60:00",
+        "60:00",
+        "60:00",
+        "60:00"
+		
+
+    ];
+
+    Brave_Date =
+    [
+        "07-06-2026",
+        "07-06-2026",
+        "07-06-2026",
+        "07-06-2026",
+        "07-06-2026",
+        "07-06-2026",
+        "07-06-2026",
+        "07-06-2026",
+        "07-06-2026",
+        "07-06-2026"
+		
+    ];
+
 }
 
 function ResetLMHS()
@@ -2171,7 +2256,213 @@ if(C14HintVisible)
     },8000);
 }
 
+function ShowBraves()
+{
+    UpdateBraves();
 
+    let But =
+        document.getElementById(
+            "butMainMenu"
+        );
+
+    But.style.left = "370px";
+
+    document.getElementById(
+        "Bravestable"
+    ).style.display = "block";
+
+    But.style.display = "block";
+
+    document.getElementById(
+        "butResetBF"
+    ).style.display = "block";
+	
+    for(let i=0;i<10;i++)
+    {
+        document.getElementById(
+            "BF" + i
+        ).style.display = "block";
+    }	
+}
+
+function HideBraves()
+{
+    document.getElementById(
+        "Bravestable"
+    ).style.display = "none";
+
+    document.getElementById(
+        "butMainMenu"
+    ).style.left = "245px";
+	
+    document.getElementById(
+        "butResetBF"
+    ).style.display = "none";	
+	
+    for(let i=0;i<10;i++)
+    {
+        document.getElementById(
+            "BF" + i
+        ).style.display = "none";
+    }	
+}
+
+function LoadBraves()
+{
+    if(
+        localStorage.getItem(
+            "Brave_Deck"
+        ) === null
+    )
+    {
+        ResetBraves();
+        SaveBraves();
+        return;
+    }
+
+    Brave_Deck =
+        JSON.parse(
+            localStorage.getItem(
+                "Brave_Deck"
+            )
+        );
+
+    Brave_Name =
+        JSON.parse(
+            localStorage.getItem(
+                "Brave_Name"
+            )
+        );
+
+    Brave_Time =
+        JSON.parse(
+            localStorage.getItem(
+                "Brave_Time"
+            )
+        );
+
+    Brave_Date =
+        JSON.parse(
+            localStorage.getItem(
+                "Brave_Date"
+            )
+        );
+}
+
+function UpdateBraves()
+{
+    let Level;
+    let Visitors;
+
+    for(let i=0;i<10;i++)
+    {
+        Level =
+            13 - i;
+
+        Visitors =
+            Level + 2;
+
+        let Index =
+            Level - 4;
+
+        document.getElementById(
+            "BF" + i
+        ).innerHTML =
+
+            String(Level)
+            .padStart(2,"0")
+
+            + "&emsp;&emsp;&emsp;"
+
+            + String(Visitors)
+            .padStart(2,"0")
+
+            + "&emsp;&emsp;&emsp;&emsp;"
+
+            + Brave_Deck[Index]
+
+            + "&emsp;&emsp;&emsp;"
+
+            + Brave_Time[Index]
+
+            + "&emsp;&emsp;"
+
+            + Brave_Date[Index]
+
+            + "&emsp;&emsp;"
+
+            + Brave_Name[Index];
+    }
+}
+
+function SaveBraves()
+{
+    localStorage.setItem(
+        "Brave_Deck",
+        JSON.stringify(Brave_Deck)
+    );
+
+    localStorage.setItem(
+        "Brave_Name",
+        JSON.stringify(Brave_Name)
+    );
+
+    localStorage.setItem(
+        "Brave_Time",
+        JSON.stringify(Brave_Time)
+    );
+
+    localStorage.setItem(
+        "Brave_Date",
+        JSON.stringify(Brave_Date)
+    );
+}
+
+function CheckBraveRecord()
+{
+    let DeckCount;
+    let Index;
+
+    DeckCount =
+        parseInt(
+            document.getElementById(
+                "deckCnt"
+            ).innerHTML.replace(
+                "Deck: ",
+                ""
+            )
+        );
+
+    if(CurrentLevel < 4)
+    {
+        return;
+    }
+
+    Index =
+        CurrentLevel - 4;
+
+    if(
+        DeckCount <
+        Brave_Deck[Index]
+    )
+    {
+        Brave_Deck[Index] =
+            DeckCount;
+
+        Brave_Name[Index] =
+            PlayerName;
+
+        Brave_Time[Index] =
+            document.getElementById(
+                "clock"
+            ).innerHTML;
+
+        Brave_Date[Index] =
+            GetTodayDate();
+
+        SaveBraves();
+    }
+}
 
 
 /* Nieuwe Functies hier direct boven plaatsen */
@@ -2478,6 +2769,7 @@ document
 .addEventListener("click", function()
 {
     HideHighScores();
+	HideBraves();
 });
 
 document
@@ -2575,13 +2867,14 @@ SaveHighScores();
 });
 
 document
-.getElementById("butEndGame") // Forfeit
+.getElementById("butEndGame")
 .addEventListener("click", function()
 {
+    CheckBraveRecord();
+
     document.getElementById(
         "introScreen"
     ).style.display = "block";
-
 });
 
 C14Token.addEventListener(
@@ -2597,6 +2890,26 @@ C14Token.addEventListener(
     {
         ShowC14Hint();
     }
+});
+
+
+document
+.getElementById("butShowFailure")
+.addEventListener("click", function()
+{
+    ShowBraves();
+});
+
+document
+.getElementById("butResetBF")
+.addEventListener("click", function()
+{
+    ResetBraves();
+
+    SaveBraves();
+
+    ShowBraves();
+	LoadBraves();
 });
 
 
@@ -2621,31 +2934,6 @@ UpdateVPs();
 UpdateLevelButton();
 UpdateMysteryVisitors();
 
-/*
-document.getElementById(
-    "HSTitle"
-)
-if(HS_View == 0)
-{
-    document.getElementById(
-        "HSTitle"
-    ).innerHTML =
-    "Rank &emsp;&emsp; Level &emsp;Score &emsp;&emsp; Time &emsp;&emsp;&emsp;&emsp;Date &emsp;&emsp;&emsp;&emsp;   Player";
-    alert(
-        "Level Score"
-    );
-}
-else
-{
-    document.getElementById(
-        "HSTitle"
-    ).innerHTML =
-    "Rank &emsp;&emsp; Score &emsp;Level &emsp;&emsp; Time &emsp;&emsp;&emsp;&emsp;Date &emsp;&emsp;&emsp;&emsp;   Player";
-    alert(
-        "Score Level"
-    );
-}
-*/
 for(let i=0;i<10;i++)
 {
     let HS =
@@ -2682,6 +2970,42 @@ for(let i=0;i<10;i++)
     table.appendChild(HS);
 }
 
+for(let i=0;i<10;i++)
+{
+    let BF =
+        document.createElement("div");
+
+    BF.id =
+        "BF" + i;
+
+    BF.className =
+        "text";
+
+    BF.style.position =
+        "absolute";
+
+    BF.style.left =
+        "300px";
+
+    BF.style.top =
+        (200 + i * 30)
+        + "px";
+
+    BF.style.color =
+        "rgb(190,180,150)";
+
+    BF.style.fontSize =
+        "22px";
+
+BF.style.zIndex =
+    "999999";
+
+BF.style.display =
+    "none";
+
+table.appendChild(BF);
+}
+
 UpdateLevelButton();
 UpdateMysteryVisitors();
 
@@ -2689,6 +3013,9 @@ ResetLMHS();
 ResetVPHS();
 LoadHighScores();
 UpdateHighScores();
+ResetBraves();
+LoadBraves();
+UpdateBraves();
 
 
 /* =====================================================
