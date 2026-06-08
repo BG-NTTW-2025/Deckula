@@ -277,6 +277,12 @@ The game ends in a win if you reach the end of the deck without being overwhelme
 		id="visCnt">
 		Vis: 15
 </div>
+
+	<div class="text"
+		style="left:6px;top:6px;color:rgb(190,180,150)"
+		id="GameInfo">
+</div>
+
 	<div class="text"
 		style="left:1130px;top:483px;font-size:30px;;color:rgb(0,0,0)"
 		id="showEnergy">
@@ -2464,6 +2470,87 @@ function CheckBraveRecord()
     }
 }
 
+ /* Info op het speelveld */
+function UpdateGameInfo()
+{
+    let Txt;
+    let Found;
+    let Index;
+
+    Txt =
+        "Player: "
+        + PlayerName
+        + "&emsp;&emsp;Level: "
+        + CurrentLevel
+        + "<br>";
+
+    Found = 0;
+
+    for(let i=0;i<10;i++)
+    {
+        if(
+            VPM_Level[i]
+            ==
+            CurrentLevel
+        )
+        {
+            Found = 1;
+
+            Txt +=
+                "Record: "
+                + VPM_Nr[i]
+                + " VP (by "
+                + VPM_Name[i]
+                + ")";
+
+            break;
+        }
+    }
+
+    if(
+        Found == 0
+        &&
+        CurrentLevel > 3
+    )
+    {
+        Index =
+            CurrentLevel - 4;
+
+        if(
+            Brave_Deck[Index]
+            != 999
+        )
+        {
+            Txt +=
+                "Brave: "
+                + Brave_Deck[Index]
+                + " cards left (by "
+                + Brave_Name[Index]
+                + ")";
+        }
+        else
+        {
+            Txt +=
+                "No record yet";
+        }
+    }
+
+    if(
+        Found == 0
+        &&
+        CurrentLevel <= 3
+    )
+    {
+        Txt +=
+            "No record yet";
+    }
+
+    document.getElementById(
+        "GameInfo"
+    ).innerHTML =
+        Txt;
+}
+
 
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
@@ -2739,7 +2826,7 @@ document
     ResetForNewGame();
 
     GameStarted = true;
-
+UpdateGameInfo();
     HideIntroScreen();
 });
 
