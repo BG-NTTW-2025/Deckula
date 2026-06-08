@@ -2412,8 +2412,9 @@ function UpdateBraves()
 
             + "&emsp;&emsp;&emsp;&emsp;"
 
-            + Brave_Deck[Index]
-
+			+ String(Brave_Deck[Index])
+			.padStart(2,"0")
+			
             + "&emsp;&emsp;&emsp;"
 
             + Brave_Time[Index]
