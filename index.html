@@ -83,7 +83,6 @@ body
 }
 </style>
 </head>
-
 <body>
 
 <!-- =====================================================
@@ -413,6 +412,34 @@ color:rgb(190,180,150);
     style="left:484px;top:430px;width:273px;height:135px;
 	display:none;z-index:260001;	
     ">
+	
+	<textarea
+    id="GameNotes"
+    style="
+        position:absolute;
+        left:60px;
+        top:550px;
+        width:350px;
+        height:80px;
+        display:none;
+        z-index:999999;
+        background:#222;
+        color:rgb(190,180,150);
+        border:1px solid rgb(190,180,150);
+        resize:none;
+    ">
+</textarea>
+
+<button
+    id="butNotes"
+    style="
+        position:absolute;
+        left:3px;
+        top:600px;
+        z-index:999999;
+    ">
+Notes
+</button>
 
 <script>
 
@@ -2551,6 +2578,66 @@ function UpdateGameInfo()
         Txt;
 }
 
+function ToggleNotes()
+{
+    let Obj =
+        document.getElementById(
+            "GameNotes"
+        );
+
+    if(
+        Obj.style.display
+        ==
+        "none"
+    )
+    {
+        Obj.style.display =
+            "block";
+    }
+    else
+    {
+        Obj.style.display =
+            "none";
+    }
+}
+
+function SaveNotes()
+{
+    localStorage.setItem(
+        "GameNotes",
+        document.getElementById(
+            "GameNotes"
+        ).value
+    );
+}
+
+function LoadNotes()
+{
+    let Notes =
+        localStorage.getItem(
+            "GameNotes"
+        );
+
+    if(
+        Notes
+        !=
+        null
+    )
+    {
+        document.getElementById(
+            "GameNotes"
+        ).value =
+            Notes;
+    }
+}
+
+
+document
+.getElementById("GameNotes")
+.addEventListener("input", function()
+{
+    SaveNotes();
+});
 
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
@@ -2717,7 +2804,7 @@ document.addEventListener("keydown", function(e)
     if(!CheatMode)
         return;
 
-    if(e.shiftKey)
+    if(e.altKey)
     {
         let nr =
             prompt("Welke kaart? 1-50");
@@ -2999,6 +3086,13 @@ document
 	LoadBraves();
 });
 
+document
+.getElementById("butNotes")
+.addEventListener("click", function()
+{
+    ToggleNotes();
+});
+
 
 /* Nieuwe Functies hier direct boven plaatsen */
 /* =====================================================
@@ -3103,6 +3197,7 @@ UpdateHighScores();
 ResetBraves();
 LoadBraves();
 UpdateBraves();
+LoadNotes();
 
 
 /* =====================================================
