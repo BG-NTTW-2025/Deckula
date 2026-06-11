@@ -1465,7 +1465,7 @@ document
 {
 if(window.umami)
 {
-    umami.track("High Scores");
+    umami.track("Show HS");
 }
     ShowHighScores();
 });
@@ -2890,6 +2890,10 @@ document.addEventListener("keydown", function(e)
 
     if(e.altKey)
     {
+if(window.umami)
+{
+    umami.track("Alt Cheat");
+}	
         let nr =
             prompt("Welke kaart? 1-50");
 
@@ -2997,6 +3001,7 @@ document
 if(window.umami)
 {
     umami.track("Start Game");
+	umami.track("Start Level " + CurrentLevel);
 }
     ResetForNewGame();
 
@@ -3186,6 +3191,10 @@ document
 .getElementById("butNotes")
 .addEventListener("click", function()
 {
+    if(window.umami)
+    {
+        umami.track("Notes");
+    }
     ToggleNotes();
 });
 
