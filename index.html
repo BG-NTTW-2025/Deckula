@@ -1459,13 +1459,31 @@ function AskPlayerName()
 
 // High Scores
 
-
 document
 .getElementById("butShowHS")
 .addEventListener("click", function()
 {
+if(window.umami)
+{
+    umami.track("High Scores");
+}
     ShowHighScores();
 });
+
+// Game Info
+
+document
+.getElementById("butGameInfo")
+.addEventListener("click", function()
+{
+    if(window.umami)
+    {
+        umami.track("Game Info");
+    }
+
+    ShowGameInfo();
+});
+
 
 document
 .getElementById("butMainMenu")
@@ -2851,6 +2869,10 @@ document
 .getElementById("butShuffle")
 .addEventListener("click", function()
 {
+if(window.umami)
+{
+    umami.track("Shuffle");
+}
     AnimateShuffleDeck();
 });
 
@@ -3070,6 +3092,10 @@ document
 .getElementById("butPause")
 .addEventListener("click", function()
 {
+if(window.umami)
+{
+    umami.track("Pause");
+}
     ShowPauseScreen();
 });
 
