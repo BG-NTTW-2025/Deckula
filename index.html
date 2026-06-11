@@ -178,7 +178,7 @@ The game ends in a win if you reach the end of the deck without being overwhelme
     class="button"
     id="butGameInfo"
     src="IB_Game_Info.gif"
-    style="left:510px;top:450px;width:250px;height:50px;opacity:0.35
+    style="left:510px;top:450px;width:250px;height:50px;
     ">
 	
 </div>
@@ -330,7 +330,7 @@ color:rgb(190,180,150);
 
 
 
-/* High Scores and Failures */
+<!-- High Scores and Failures -->
 
 	<img 
 		id="HStable"
@@ -378,7 +378,7 @@ color:rgb(190,180,150);
     ">
 </div>
 
-/* Brave Failures  */
+<!-- Brave Failures  -->
 
 	<img 
 		id="Bravestable"
@@ -396,7 +396,7 @@ color:rgb(190,180,150);
     ">	
 
 
-/* PAUSE GAME*/
+<!-- PAUSE GAME -->
 
 	<img class="GamePaused"
 		id="PauseScroller"
@@ -440,6 +440,21 @@ color:rgb(190,180,150);
     ">
 Notes
 </button>
+
+<!-- X-Y Coordinaten -->
+<div
+    id="DebugXY"
+    style="
+        position:absolute;
+        left:1070px;
+        top:540px;
+        color:yellow;
+        font-size:20px;
+        z-index:999999;
+    //    display:none;	// Onzichtbaar	
+    ">
+</div>
+
 
 <script>
 
@@ -1212,6 +1227,8 @@ function AnimateShuffleDeck()
             cy <= 170
         )
         {
+		card.dataset.faceup = "0";
+		card.src = "C00.gif";
             DeckList.push(card);
         }
     }
@@ -2647,11 +2664,28 @@ document
 
 document.addEventListener("pointermove", (e) =>
 {
+    const r =
+        table.getBoundingClientRect();
+
+    document.getElementById(
+        "DebugXY"
+    ).innerHTML =
+        "X=" +
+        Math.floor(e.clientX - r.left)
+        +
+        " Y=" +
+        Math.floor(e.clientY - r.top);
+
     if(activeCard === null)
         return;
 
-    const r =
-        table.getBoundingClientRect();
+    document.getElementById(
+        "DebugXY"
+    ).innerHTML +=
+        "<br>Card: " +
+        (parseInt(activeCard.style.left)+44)
+        + "," +
+        (parseInt(activeCard.style.top)+61);		
 
     activeCard.style.left =
         (e.clientX - r.left - dragOffsetX)
@@ -2660,7 +2694,9 @@ document.addEventListener("pointermove", (e) =>
     activeCard.style.top =
         (e.clientY - r.top - dragOffsetY)
         + "px";
-	UpdateC14Token();
+
+    UpdateC14Token();
+
     e.preventDefault();
 });
 
@@ -2717,9 +2753,34 @@ document.addEventListener("pointerup", () =>
                 HideBottomDeckArea();
             }
         }
+		
+		
+// Home Area auto face up
+if(
+    cx >= 409 &&
+    cx <= 1078 &&
+    cy >= 410 &&
+    cy <= 580
+	
+)
+{
+    if(
+        activeCard.dataset.faceup === "0"
+    )
+    {
+        activeCard.dataset.faceup = "1";
+        activeCard.src =
+            activeCard.dataset.real;
+    }
+}		
+
+
+
     }
 
     activeCard = null;
+	
+	
 
     UpdateAreas();
     UpdateC14Token();
@@ -2911,6 +2972,10 @@ document
 .getElementById("butStartGame")
 .addEventListener("click", function()
 {
+if(window.umami)
+{
+    umami.track("Start Game");
+}
     ResetForNewGame();
 
     GameStarted = true;
