@@ -3163,6 +3163,10 @@ document
 .getElementById("butShowFailure")
 .addEventListener("click", function()
 {
+if(window.umami)
+{
+    umami.track("Show Braves");
+}
     ShowBraves();
 });
 
